@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Button from "./inputs/Button";
 import {useDispatch} from "react-redux";
 import {asyncAddEchoStream} from "../actions/echoStreamActions";
-import {removeHashtagAndSpacesFromString} from "../utils/utils";
+import {sanitizeString} from "../utils/utils";
 
 const StreamStarter: React.FC = () => {
 	const dispatch = useDispatch();
@@ -18,7 +18,7 @@ const StreamStarter: React.FC = () => {
 			return;
 		}
 
-		dispatch(asyncAddEchoStream(removeHashtagAndSpacesFromString(hashtag)));
+		dispatch(asyncAddEchoStream(sanitizeString(hashtag)));
 		setHashtag("");
 	};
 

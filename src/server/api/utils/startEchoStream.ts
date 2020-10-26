@@ -1,6 +1,5 @@
 import {clientEchoStream, ClientEchoStream} from "../../../client/utils/clientEchoStream";
-import {addStreamToServerState, generateId} from "./util";
-import {serverEchoStream} from "./serverEchoStream";
+import {generateId} from "./util";
 import {Request} from "express-serve-static-core";
 import {initIoNameSpaceAndStartStreaming} from "./initIoNameSpaceAndStartStreaming";
 
@@ -9,9 +8,7 @@ export const startEchoStream = (req: Request): ClientEchoStream => {
 
 	const id = generateId(12);
 
-	addStreamToServerState(req, serverEchoStream)(id, hashtag);
-
-	initIoNameSpaceAndStartStreaming(id);
+	initIoNameSpaceAndStartStreaming(req)(id, hashtag);
 
 	return clientEchoStream(id, hashtag, true);
 };

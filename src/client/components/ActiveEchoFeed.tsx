@@ -16,8 +16,9 @@ const ActiveEchoFeed: React.FC = () => {
 		socket.on("connect", () => {
 			console.log("Socket connection opened!");
 
-			socket.on("io-message", (data: string) => {
-				setIoMessage(data);
+			socket.on("io-message", (data: any) => {
+				console.log(data);
+				setIoMessage(data.text);
 			});
 		});
 
