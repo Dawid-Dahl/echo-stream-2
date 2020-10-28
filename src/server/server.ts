@@ -5,8 +5,8 @@ import cors from "cors";
 import errorhandler from "errorhandler";
 import morgan from "morgan";
 import io from "socket.io";
-const redis = require("redis");
-const session = require("express-session");
+import redis from "redis";
+import session from "express-session";
 
 export const app = express();
 
