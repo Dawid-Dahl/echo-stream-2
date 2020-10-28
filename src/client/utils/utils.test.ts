@@ -33,20 +33,19 @@ describe("removeHashtagAndSpacesFromString", () => {
 
 describe("sanitizeStringUnconfig", () => {
 	describe("happy path", () => {
-		it("sanitizes a string with the given functions", () => {
-			const str = "# Lol";
-			const expected = "lol";
-			const sanitizeString = sanitizeStringUnconfig(
-				removeHashtagAndSpacesFromString,
-				(str: string) => str.toLocaleLowerCase()
-			);
-
-			expect(sanitizeString(str)).toBe(expected);
-		});
-		it("sanitizes a string with the given functions", () => {
+		it("sanitizes a string with one function", () => {
 			const str = "# Lol";
 			const expected = "Lol";
 			const sanitizeString = sanitizeStringUnconfig(removeHashtagAndSpacesFromString);
+
+			expect(sanitizeString(str)).toBe(expected);
+		});
+		it("sanitizes a string with two functions", () => {
+			const str = "# Lol";
+			const expected = "lol";
+			const sanitizeString = sanitizeStringUnconfig(removeHashtagAndSpacesFromString, str =>
+				str.toLocaleLowerCase()
+			);
 
 			expect(sanitizeString(str)).toBe(expected);
 		});

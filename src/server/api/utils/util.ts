@@ -37,14 +37,14 @@ export const killChildProcess = (req: Request, echoStreamId: string) => {
 
 			console.log(`ChildProcess ${echoStream.childProcess.pid} was killed!`);
 		} else {
-			console.log("No echoStream was found in serverState");
+			console.log("No echoStream was found in the server state");
 		}
 	} catch (e) {
 		console.error(e);
 	}
 };
 
-const getPidsOfAllProcessesExceptMain = (stoutResponse: string): number[] => {
+export const getPidsOfAllProcessesExceptMain = (stoutResponse: string): number[] => {
 	const allProcessPids = stoutResponse
 		.split("\n")
 		.filter(process => !process.match(/grep node/))

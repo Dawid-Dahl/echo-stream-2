@@ -19,6 +19,6 @@ export const initIoNameSpaceAndStartStreaming = (req: Request) => (
 	childProcess.send(hashtag);
 
 	childProcess.on("message", message => {
-		idNameSpace.emit("io-message", "TODO");
+		idNameSpace.emit("io-message", message);
 	});
 };

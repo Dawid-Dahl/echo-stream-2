@@ -13,8 +13,12 @@ const App: React.FC = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (echoStreamReducer.length === 0) {
-			dispatch(asyncRemoveAllEchoStreams());
+		if (process.env.NODE_ENV === "development") {
+			if (echoStreamReducer.length === 0) {
+				dispatch(asyncRemoveAllEchoStreams());
+			}
+		} else {
+			//fetch active stream info from server and add to client state
 		}
 	}, []);
 
