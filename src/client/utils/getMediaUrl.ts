@@ -63,7 +63,7 @@ export const getMediaUrlUnconfigured = (config: GetMediaUrlConfig) => (
 	platform: SocialMediaPlatforms,
 	data: any
 ): string | undefined => {
-	const urlExtractor = config[platform]?.find(urlExtractor => urlExtractor(data));
+	const urlExtractor = config[platform]?.find(extractor => extractor(data));
 	return urlExtractor && urlExtractor(data);
 };
 

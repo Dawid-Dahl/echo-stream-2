@@ -6,7 +6,6 @@ process.on("message", hashtag => {
 	const twitStreamEmitter = T.stream("statuses/filter", {track: hashtag ?? "#BACKUPHASHTAG"});
 
 	twitStreamEmitter.on("tweet", tweet => {
-		console.log("TWEEET: ", tweet);
 		process.send!(tweet);
 	});
 });

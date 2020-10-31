@@ -27,7 +27,7 @@ const Wrapper = styled.div`
 	z-index: 10;
 	width: 100%;
 	color: white;
-	background-color: black;
+	background-color: var(--main-color);
 	p {
 		text-align: center;
 	}

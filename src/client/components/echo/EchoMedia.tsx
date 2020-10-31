@@ -13,7 +13,7 @@ const EchoMedia: React.FC<Props> = ({mediaUrl, sourceLink}) => {
 		<>
 			<Wrapper>
 				{isVideo ? (
-					<video src={mediaUrl} controls loop autoPlay={true}></video>
+					<video src={mediaUrl} controls loop autoPlay={true} muted></video>
 				) : mediaUrl ? (
 					<a href={sourceLink} target="_blank" rel="noopener noreferrer">
 						<img src={mediaUrl} alt="media image" />

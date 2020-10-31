@@ -23,7 +23,7 @@ export type Echo = Readonly<{
 
 type Props = Omit<Echo, "id">;
 
-const Echo: React.FC<Props> = ({
+export const Echo: React.FC<Props> = ({
 	text,
 	mediaUrl,
 	author,
@@ -50,8 +50,6 @@ const Echo: React.FC<Props> = ({
 		</Wrapper>
 	);
 };
-
-export default Echo;
 
 const Wrapper = styled.div`
 	display: flex;

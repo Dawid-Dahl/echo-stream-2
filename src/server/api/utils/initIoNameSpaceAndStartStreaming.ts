@@ -18,7 +18,7 @@ export const initIoNameSpaceAndStartStreaming = (req: Request) => (
 
 	childProcess.send(hashtag);
 
-	childProcess.on("message", message => {
-		idNameSpace.emit("io-message", message);
+	childProcess.on("message", tweet => {
+		idNameSpace.emit("io-message", {tweet});
 	});
 };

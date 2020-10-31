@@ -1,10 +1,49 @@
-/* import React from "react";
+import React, {useEffect, useState} from "react";
+import {useSelector} from "react-redux";
+import {useLocation} from "react-router";
 import styled from "styled-components";
+import {RootState} from "../../store/store";
+import {ValueOf} from "../../types/types";
+import echoConverter from "../../utils/echoConverter";
+import {twitterData} from "../../utils/twitter-data/twitterData";
+import {Echo} from "../echo/Echo";
 import StreamHeader from "./StreamHeader";
+import WelcomeMessage from "./WelcomeMessage";
+import io from "socket.io-client";
 
 type Props = {};
 
 const Stream: React.FC<Props> = () => {
+	const query = useLocation();
+	const echoStreams = useSelector((state: RootState) => state.echoStreamReducer.echoStreams);
+
+	const echoStreamId = query.pathname.split("/").slice(-1)[0];
+
+	const hashtag = echoStreams.find(stream => stream.id === echoStreamId).hashtag;
+
+	const [echoes, setEchoes] = useState<Echo[]>([]);
+
+	useEffect(() => {
+		const socket = io(`${process.env.SERVER_URL}/${echoStreamId}`);
+
+		socket.on("connect", () => {
+			console.log("Socket connection opened!");
+
+			socket.on("io-message", (data: ValueOf<typeof twitterData>) => {
+				setEchoes(echoes => [...echoes, echoConverter("twitter", data)]);
+			});
+		});
+
+		socket.on("disconnect", () => {
+			console.log("Socket disconnected!");
+		});
+
+		return () => {
+			console.log(`Closing socket: ${echoStreamId}`);
+			socket.close();
+		};
+	}, []);
+
 	return (
 		<Wrapper>
 			<StreamHeader text="DELTA I KONVERSATIONEN PÅ TWITTER" hashtag={hashtag} />
@@ -40,4 +79,3 @@ const Wrapper = styled.div`
 	height: 99.8vh;
 	overflow: auto;
 `;
- */

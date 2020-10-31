@@ -16,6 +16,7 @@ const echoConverter = (
 
 			const {id_str, text, timestamp_ms, favorite_count} = data.tweet;
 			const {name, screen_name, profile_image_url} = data.tweet.user;
+
 			return echo.create({
 				sourceId: id_str,
 				text: text ?? "",

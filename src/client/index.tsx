@@ -6,13 +6,13 @@ import {Provider} from "react-redux";
 import {Route, Router, Switch} from "react-router";
 import App from "./App";
 import store from "./store/store";
-import ActiveEchoFeed from "./components/ActiveEchoFeed";
+import Stream from "./components/stream/Stream";
 
 ReactDOM.render(
 	<Provider store={store}>
 		<Router history={history as History<History>}>
 			<Switch>
-				<Route path="/streams/:echoStreamId" component={ActiveEchoFeed} />
+				<Route path="/streams/:echoStreamId" component={Stream} />
 				<Route path="/" component={App} />
 			</Switch>
 		</Router>

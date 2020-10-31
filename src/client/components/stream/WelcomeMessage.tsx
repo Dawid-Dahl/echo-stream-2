@@ -1,7 +1,7 @@
-/* import React from "react";
+import React from "react";
 import styled from "styled-components";
-import {SocialMediaPlatforms} from "../types/types";
 import {useDispatch} from "react-redux";
+import {SocialMediaPlatforms} from "../../types/types";
 
 export type Echo = {
 	id: string;
@@ -56,4 +56,3 @@ const Wrapper = styled.div`
 		text-align: center;
 	}
 `;
- */
