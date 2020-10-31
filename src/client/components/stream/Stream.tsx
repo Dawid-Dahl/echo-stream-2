@@ -30,7 +30,9 @@ const Stream: React.FC<Props> = () => {
 			console.log("Socket connection opened!");
 
 			socket.on("io-message", (data: ValueOf<typeof twitterData>) => {
-				setEchoes(echoes => [...echoes, echoConverter("twitter", data)]);
+				setEchoes(echoes =>
+					echoes.length >= 10000 ? echoes : [echoConverter("twitter", data), ...echoes]
+				);
 			});
 		});
 

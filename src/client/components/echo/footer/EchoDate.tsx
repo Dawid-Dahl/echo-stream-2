@@ -11,12 +11,9 @@ type Props = {
 
 const EchoDate: React.FC<Props> = ({sourceDate}) => {
 	return (
-		console.log(sourceDate),
-		(
-			<>
-				<Wrapper>{dayjs(parseInt(sourceDate)).fromNow()}</Wrapper>
-			</>
-		)
+		<>
+			<Wrapper>{dayjs(parseInt(sourceDate)).fromNow()}</Wrapper>
+		</>
 	);
 };
 
