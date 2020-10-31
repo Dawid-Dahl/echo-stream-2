@@ -8,7 +8,7 @@ const ActiveEchoFeed: React.FC = () => {
 
 	const echoStreamId = query.pathname.split("/").slice(-1)[0];
 
-	const [ioMessage, setIoMessage] = useState("");
+	const [tweet, setTweet] = useState("");
 
 	useEffect(() => {
 		const socket = io(`${process.env.SERVER_URL}/${echoStreamId}`);
@@ -18,7 +18,7 @@ const ActiveEchoFeed: React.FC = () => {
 
 			socket.on("io-message", (data: any) => {
 				console.log(data);
-				setIoMessage(data.text);
+				setTweet(data);
 			});
 		});
 
@@ -34,7 +34,7 @@ const ActiveEchoFeed: React.FC = () => {
 
 	return (
 		<Wrapper>
-			<p>{ioMessage}</p>
+			<p>{tweet}</p>
 		</Wrapper>
 	);
 };

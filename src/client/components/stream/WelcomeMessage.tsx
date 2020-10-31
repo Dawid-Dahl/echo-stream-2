@@ -1,4 +1,4 @@
-import React from "react";
+/* import React from "react";
 import styled from "styled-components";
 import {SocialMediaPlatforms} from "../types/types";
 import {useDispatch} from "react-redux";
@@ -56,3 +56,4 @@ const Wrapper = styled.div`
 		text-align: center;
 	}
 `;
+ */

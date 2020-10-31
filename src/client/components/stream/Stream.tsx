@@ -1,4 +1,4 @@
-import React from "react";
+/* import React from "react";
 import styled from "styled-components";
 import StreamHeader from "./StreamHeader";
 
@@ -40,3 +40,4 @@ const Wrapper = styled.div`
 	height: 99.8vh;
 	overflow: auto;
 `;
+ */
