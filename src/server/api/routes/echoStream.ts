@@ -5,10 +5,6 @@ import {removeAllStreamsFromServerState} from "../utils/util";
 
 const echoStreamRouter = express.Router();
 
-echoStreamRouter.get("/", (req, res) => {
-	res.send("Hello, you!");
-});
-
 echoStreamRouter.post("/start", echoStreamStartController);
 
 echoStreamRouter.delete("/stop", echoStreamStopController);
