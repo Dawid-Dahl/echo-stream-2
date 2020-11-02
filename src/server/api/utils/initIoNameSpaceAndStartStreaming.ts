@@ -14,7 +14,7 @@ export const initIoNameSpaceAndStartStreaming = (req: Request) => (
 
 	const childProcess = fork(`${__dirname}/forkChildToInitTwitStream.ts`);
 
-	addStreamToServerState(req, serverEchoStream)(echoStreamId, hashtag, childProcess);
+	addStreamToServerState(req, serverEchoStream)(echoStreamId, hashtag);
 
 	childProcess.send(hashtag);
 

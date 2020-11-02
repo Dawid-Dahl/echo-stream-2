@@ -1,81 +1,56 @@
-import {ChildProcess} from "child_process";
 import crypto from "crypto";
 import {Request} from "express-serve-static-core";
 import {ServerEchoStream} from "./serverEchoStream";
-import {exec} from "child_process";
+import {redisClient} from "../../server";
+import {promisify} from "util";
 
 export const generateId = (length: number) => crypto.randomBytes(length).toString("hex");
 
 export const addStreamToServerState = (
 	req: Request,
-	serverEchoStream: (
-		id: string,
-		hashtag: string,
-		active: boolean,
-		childProcess: ChildProcess
-	) => ServerEchoStream
-) => (id: string, hashtag: string, childProcess: ChildProcess) => {
-	req.app.locals.echoStreamServerState.push(serverEchoStream(id, hashtag, true, childProcess));
-};
+	serverEchoStream: (id: string, hashtag: string, active: boolean) => ServerEchoStream
+) => async (id: string, hashtag: string) => {
+	const redisGetAsync = promisify(redisClient.get).bind(redisClient);
 
-export const removeStreamFromServerState = (req: Request, childProcessId: string) => {
-	const echoStreamServerState = req.app.locals.echoStreamServerState as ServerEchoStream[];
+	const res = await redisGetAsync("echoStreamServerState");
 
-	req.app.locals.echoStreamServerState = echoStreamServerState.filter(
-		stream => stream.id !== childProcessId
-	);
-};
+	if (res) {
+		const echoStreamServerState = JSON.parse(res) as ServerEchoStream[];
 
-export const killChildProcess = (req: Request, echoStreamId: string) => {
-	try {
-		const echoStreamServerState = req.app.locals.echoStreamServerState as ServerEchoStream[];
-
-		const echoStream = echoStreamServerState.find(stream => stream.id === echoStreamId);
-
-		if (echoStream) {
-			process.kill(echoStream.childProcess.pid);
-
-			console.log(`ChildProcess ${echoStream.childProcess.pid} was killed!`);
-		} else {
-			console.log("No echoStream was found in the server state");
-		}
-	} catch (e) {
-		console.error(e);
+		redisClient.set(
+			"echoStreamServerState",
+			JSON.stringify([...echoStreamServerState, serverEchoStream(id, hashtag, true)])
+		);
+	} else {
+		throw new Error("Couldn't get the stream server state from Redis.");
 	}
 };
 
-export const getPidsOfAllProcessesExceptMain = (stoutResponse: string): number[] => {
-	const allProcessPids = stoutResponse
-		.split("\n")
-		.filter(process => !process.match(/grep node/))
-		.map(process => (process.match(/\d{5}/) ? process.match(/\d{5}/)![0] : null))
-		.map(pid => Number(pid))
-		.filter(pid => pid !== 0);
+export const removeStreamFromServerState = (req: Request) => async (echoStreamId: string) => {
+	const redisGetAsync = promisify(redisClient.get).bind(redisClient);
 
-	const mainProcPid = process.pid;
-	const mainProcParentProcPid = process.ppid;
+	const res = await redisGetAsync("echoStreamServerState");
 
-	const processesToKill = allProcessPids.filter(
-		pid => pid !== mainProcPid && pid !== mainProcParentProcPid
-	);
+	if (res) {
+		const echoStreamServerState = JSON.parse(res) as ServerEchoStream[];
 
-	return processesToKill;
+		redisClient.set(
+			"echoStreamServerState",
+			JSON.stringify(echoStreamServerState.filter(stream => stream.id !== echoStreamId))
+		);
+	} else {
+		throw new Error("Couldn't get the stream server state from Redis.");
+	}
 };
 
-export const killAllChildProcesses = (req: Request) => {
-	exec("ps |grep node|grep -v parcel", (err, stout) => {
-		if (!err) {
-			const processesToKill = getPidsOfAllProcessesExceptMain(stout);
+export const removeAllStreamsFromServerState = async (req: Request) => {
+	const redisGetAsync = promisify(redisClient.get).bind(redisClient);
 
-			processesToKill.forEach(pid => {
-				console.log(`ChildProcess ${pid} was killed!`);
-				process.kill(pid);
-			});
-		} else {
-			console.error(err);
-		}
-	});
+	const res = await redisGetAsync("echoStreamServerState");
+
+	if (res) {
+		redisClient.set("echoStreamServerState", JSON.stringify([]));
+	} else {
+		throw new Error("Couldn't get the stream server state from Redis.");
+	}
 };
-
-export const removeAllStreamsFromServerState = (req: Request) =>
-	(req.app.locals.echoStreamServerState = []);

@@ -13,7 +13,7 @@ export const app = express();
 const PORT = process.env.PORT || 5000;
 
 const RedisStore = require("connect-redis")(session);
-const redisClient = redis.createClient();
+export const redisClient = redis.createClient();
 
 app.use(
 	session({
@@ -33,8 +33,7 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 
-//holding state for echoStream child processes.
-app.locals.echoStreamServerState = [];
+redisClient.set("echoStreamServerState", JSON.stringify([]));
 
 app.use("/api", apiRouter);
 
