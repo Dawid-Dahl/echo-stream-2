@@ -4,19 +4,22 @@ import {stringTrimmer} from "../../../utils/utils";
 
 type Props = {
 	profileImageUrl: string | undefined;
+	sourceLink: string | undefined;
 };
 
 //profile images get higher res if you remove _normal from the URL.
 
-const ProfileImage: React.FC<Props> = ({profileImageUrl}) => {
+const ProfileImage: React.FC<Props> = ({profileImageUrl, sourceLink}) => {
 	return (
 		<>
 			<Wrapper>
 				{profileImageUrl ? (
-					<img
-						src={profileImageUrl && stringTrimmer("_normal", profileImageUrl)}
-						alt="profile image"
-					/>
+					<a href={sourceLink} target="_blank" rel="noopener noreferrer">
+						<img
+							src={profileImageUrl && stringTrimmer("_normal", profileImageUrl)}
+							alt="profile image"
+						/>
+					</a>
 				) : (
 					<div></div>
 				)}

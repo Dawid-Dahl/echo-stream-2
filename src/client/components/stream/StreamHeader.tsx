@@ -9,7 +9,7 @@ type Props = {
 const StreamHeader: React.FC<Props> = ({text, hashtag}) => {
 	return (
 		<Wrapper>
-			<p>{`${text}: ${hashtag}`}</p>
+			<p>{`${text}: #${hashtag}`}</p>
 		</Wrapper>
 	);
 };
@@ -30,5 +30,6 @@ const Wrapper = styled.div`
 	background-color: var(--main-color);
 	p {
 		text-align: center;
+		margin: 0.5em;
 	}
 `;

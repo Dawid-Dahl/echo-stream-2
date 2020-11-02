@@ -8,17 +8,21 @@ export const initIoNameSpaceAndStartStreaming = (req: Request) => (
 	echoStreamId: string,
 	hashtag: string
 ) => {
-	const idNameSpace = ioServer.of(`/${echoStreamId}`).on("connection", socket => {
-		console.log(`Client connected to ${echoStreamId} namespace`);
-	});
+	try {
+		const idNameSpace = ioServer.of(`/${echoStreamId}`).on("connection", socket => {
+			console.log(`Client connected to namespace: ${echoStreamId}`);
+		});
 
-	const childProcess = fork(`${__dirname}/forkChildToInitTwitStream.ts`);
+		const childProcess = fork(`${__dirname}/forkChildToInitTwitStream.ts`);
 
-	addStreamToServerState(req, serverEchoStream)(echoStreamId, hashtag, childProcess);
+		addStreamToServerState(req, serverEchoStream)(echoStreamId, hashtag, childProcess);
 
-	childProcess.send(hashtag);
+		childProcess.send(hashtag);
 
-	childProcess.on("message", tweet => {
-		idNameSpace.emit("io-message", {tweet});
-	});
+		childProcess.on("message", tweet => {
+			idNameSpace.emit("io-message", {tweet});
+		});
+	} catch (e) {
+		console.log(e);
+	}
 };

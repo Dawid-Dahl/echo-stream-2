@@ -28,7 +28,7 @@ const EchoFooter: React.FC<Props> = ({
 		<>
 			<Wrapper>
 				<div>
-					<ProfileImage profileImageUrl={profileImageUrl} />
+					<ProfileImage sourceLink={sourceLink} profileImageUrl={profileImageUrl} />
 					<div>
 						<ProfileName author={author} authorScreenName={authorScreenName} />
 						<EchoDate sourceDate={sourceDate} />
