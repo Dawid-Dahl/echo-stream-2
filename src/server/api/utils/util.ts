@@ -1,14 +1,13 @@
 import crypto from "crypto";
-import {Request} from "express-serve-static-core";
 import {ServerEchoStream} from "./serverEchoStream";
 import {redisClient} from "../../server";
 import {promisify} from "util";
 
 export const generateId = (length: number) => crypto.randomBytes(length).toString("hex");
 
-export const addStreamToServerState = (
+export const saveEchoStreamInServerState = (
 	serverEchoStream: (id: string, hashtag: string, active: boolean) => ServerEchoStream
-) => async (id: string, hashtag: string) => {
+) => async (id: string, hashtag: string): Promise<boolean> => {
 	const redisGetAsync = promisify(redisClient.get).bind(redisClient);
 
 	const res = await redisGetAsync("echoStreamServerState");
@@ -20,8 +19,10 @@ export const addStreamToServerState = (
 			"echoStreamServerState",
 			JSON.stringify([...echoStreamServerState, serverEchoStream(id, hashtag, true)])
 		);
+
+		return true;
 	} else {
-		throw new Error("Couldn't get the stream server state from Redis.");
+		return false;
 	}
 };
 

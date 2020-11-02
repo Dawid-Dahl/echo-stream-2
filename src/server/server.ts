@@ -7,6 +7,7 @@ import morgan from "morgan";
 import io from "socket.io";
 import redis from "redis";
 import session from "express-session";
+import TwitterStream from "./api/utils/TwitterStream";
 
 export const app = express();
 
@@ -42,5 +43,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 const server = app.listen(PORT, () => console.log(`Server now listening at port: ${PORT}`));
+
+export const twitterStream = new TwitterStream();
 
 export const ioServer = io.listen(server);

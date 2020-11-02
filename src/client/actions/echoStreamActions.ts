@@ -37,9 +37,9 @@ export const asyncAddEchoStream = (hashtag: string): AppThunk => async dispatch 
 	});
 
 	if (res.ok) {
-		const echoStream: ClientEchoStream = await res.json();
+		const echoStream: string = await res.json();
 
-		dispatch(addEchoStream(echoStream));
+		dispatch(addEchoStream(JSON.parse(echoStream)));
 	}
 };
 
