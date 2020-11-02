@@ -8,7 +8,7 @@ const echoStreamStopController = (
 ) => {
 	const echoStreamId = req.body.id as string;
 
-	removeStreamFromServerState(req)(echoStreamId);
+	removeStreamFromServerState(echoStreamId);
 
 	res.status(200).json({echoStreamId});
 };

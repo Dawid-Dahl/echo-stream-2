@@ -7,7 +7,6 @@ import {promisify} from "util";
 export const generateId = (length: number) => crypto.randomBytes(length).toString("hex");
 
 export const addStreamToServerState = (
-	req: Request,
 	serverEchoStream: (id: string, hashtag: string, active: boolean) => ServerEchoStream
 ) => async (id: string, hashtag: string) => {
 	const redisGetAsync = promisify(redisClient.get).bind(redisClient);
@@ -26,7 +25,7 @@ export const addStreamToServerState = (
 	}
 };
 
-export const removeStreamFromServerState = (req: Request) => async (echoStreamId: string) => {
+export const removeStreamFromServerState = async (echoStreamId: string) => {
 	const redisGetAsync = promisify(redisClient.get).bind(redisClient);
 
 	const res = await redisGetAsync("echoStreamServerState");
@@ -43,7 +42,7 @@ export const removeStreamFromServerState = (req: Request) => async (echoStreamId
 	}
 };
 
-export const removeAllStreamsFromServerState = async (req: Request) => {
+export const removeAllStreamsFromServerState = async () => {
 	const redisGetAsync = promisify(redisClient.get).bind(redisClient);
 
 	const res = await redisGetAsync("echoStreamServerState");

@@ -14,7 +14,7 @@ echoStreamRouter.post("/start", echoStreamStartController);
 echoStreamRouter.delete("/stop", echoStreamStopController);
 
 echoStreamRouter.delete("/clear-server-state", (req, res) => {
-	removeAllStreamsFromServerState(req);
+	removeAllStreamsFromServerState();
 
 	res.status(200).send("Server state cleared.");
 });
