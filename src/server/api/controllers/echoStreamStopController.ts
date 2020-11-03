@@ -1,5 +1,6 @@
 import {ParamsDictionary, Request, Response} from "express-serve-static-core";
 import QueryString from "qs";
+import {redisClient} from "../../server";
 import {removeStreamFromServerState} from "../utils/util";
 
 const echoStreamStopController = (
@@ -8,7 +9,7 @@ const echoStreamStopController = (
 ) => {
 	const echoStreamId = req.body.id as string;
 
-	removeStreamFromServerState(echoStreamId);
+	removeStreamFromServerState(redisClient)(echoStreamId);
 
 	res.status(200).json({echoStreamId});
 };

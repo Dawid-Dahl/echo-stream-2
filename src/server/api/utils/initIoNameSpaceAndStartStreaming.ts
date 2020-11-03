@@ -1,4 +1,4 @@
-import {ioServer} from "../../server";
+import {ioServer, redisClient} from "../../server";
 import {fork} from "child_process";
 import {serverEchoStream} from "./serverEchoStream";
 import {saveEchoStreamInServerState} from "./util";
@@ -10,7 +10,7 @@ export const initIoNameSpaceAndStartStreaming = (echoStreamId: string, hashtag: 
 
 	const childProcess = fork(`${__dirname}/forkChildToInitTwitStream.ts`);
 
-	saveEchoStreamInServerState(serverEchoStream)(echoStreamId, hashtag);
+	saveEchoStreamInServerState(redisClient, serverEchoStream)(echoStreamId, hashtag);
 
 	childProcess.send(hashtag);
 
