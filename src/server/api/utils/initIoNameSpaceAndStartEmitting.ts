@@ -1,8 +1,11 @@
-import {ioServer, redisClient, twitterStream} from "../../server";
-import {ServerEchoStream, serverEchoStream} from "./serverEchoStream";
-import {addEchoStreamToServerState} from "./util";
+import {ioServer, twitterStream} from "../../server";
+import {ServerEchoStream} from "./serverEchoStream";
 
 export const initIoNameSpaceAndStartEmitting = ({id, hashtag}: ServerEchoStream) => {
+	const idNameSpace = ioServer.of(`/${id}`).on("connection", socket => {
+		console.log(`Client connected to ${id} namespace. The hashtag is #${hashtag}.`);
+	});
+
 	twitterStream.on("tweet", tweet => {
 		const text = tweet.extended_tweet
 			? tweet.extended_tweet.full_text
@@ -10,20 +13,8 @@ export const initIoNameSpaceAndStartEmitting = ({id, hashtag}: ServerEchoStream)
 			? tweet.full_text
 			: tweet.text;
 
-		console.log(text);
+		if (text.toLowerCase().includes(hashtag)) {
+			idNameSpace.emit("io-message", {tweet});
+		}
 	});
-
-	/* const idNameSpace = ioServer.of(`/${id}`).on("connection", socket => {
-		console.log(`Client connected to ${id} namespace`);
-	});
-
-	const childProcess = fork(`${__dirname}/forkChildToInitTwitStream.ts`);
-
-	addEchoStreamToServerState(redisClient, serverEchoStream)(id, hashtag);
-
-	childProcess.send(hashtag);
-
-	childProcess.on("message", tweet => {
-		idNameSpace.emit("io-message", {tweet});
-	}); */
 };

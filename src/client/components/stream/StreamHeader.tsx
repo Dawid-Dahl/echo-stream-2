@@ -9,7 +9,7 @@ type Props = {
 const StreamHeader: React.FC<Props> = ({text, hashtag}) => {
 	return (
 		<Wrapper>
-			<p>{`${text}: ${hashtag}`}</p>
+			<p>{`${text}: #${hashtag}`}</p>
 		</Wrapper>
 	);
 };

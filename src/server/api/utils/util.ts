@@ -92,5 +92,5 @@ export const removeAllStreamsFromServerState = (redisClient: RedisClient) => asy
 export const shutDownAndCleanUpAfterEchoStream = (twitterStream: TwitterStream) => {
 	twitterStream.stopTwitterStream();
 
-	twitterStream.removeAllListeners("tweet");
+	twitterStream.removeAllListeners();
 };
