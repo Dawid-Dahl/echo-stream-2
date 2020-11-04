@@ -14,6 +14,11 @@ export const echoStreamReducer = (
 	action: EchoStreamActionTypes
 ): echoStreamReducerState => {
 	switch (action.type) {
+		case "ADD_ECHO_STREAMS":
+			return {
+				...state,
+				echoStreams: action.payload,
+			};
 		case "ADD_ECHO_STREAM":
 			return {
 				...state,

@@ -1,81 +1,96 @@
-import {ChildProcess} from "child_process";
 import crypto from "crypto";
-import {Request} from "express-serve-static-core";
 import {ServerEchoStream} from "./serverEchoStream";
-import {exec} from "child_process";
+import {promisify} from "util";
+import {RedisClient} from "redis";
+import TwitterStream from "./TwitterStream";
 
 export const generateId = (length: number) => crypto.randomBytes(length).toString("hex");
 
-export const addStreamToServerState = (
-	req: Request,
-	serverEchoStream: (
-		id: string,
-		hashtag: string,
-		active: boolean,
-		childProcess: ChildProcess
-	) => ServerEchoStream
-) => (id: string, hashtag: string, childProcess: ChildProcess) => {
-	req.app.locals.echoStreamServerState.push(serverEchoStream(id, hashtag, true, childProcess));
-};
-
-export const removeStreamFromServerState = (req: Request, childProcessId: string) => {
-	const echoStreamServerState = req.app.locals.echoStreamServerState as ServerEchoStream[];
-
-	req.app.locals.echoStreamServerState = echoStreamServerState.filter(
-		stream => stream.id !== childProcessId
-	);
-};
-
-export const killChildProcess = (req: Request, echoStreamId: string) => {
+export const addEchoStreamToServerState = (
+	redisClient: RedisClient,
+	serverEchoStream: (id: string, hashtag: string, active: boolean) => ServerEchoStream
+) => async (id: string, hashtag: string) => {
 	try {
-		const echoStreamServerState = req.app.locals.echoStreamServerState as ServerEchoStream[];
+		const redisGetAsync = promisify(redisClient.get).bind(redisClient);
 
-		const echoStream = echoStreamServerState.find(stream => stream.id === echoStreamId);
+		const res = await redisGetAsync("echoStreamServerState");
 
-		if (echoStream) {
-			process.kill(echoStream.childProcess.pid);
+		if (res) {
+			const echoStreamServerState = JSON.parse(res) as ServerEchoStream[];
 
-			console.log(`ChildProcess ${echoStream.childProcess.pid} was killed!`);
+			redisClient.set(
+				"echoStreamServerState",
+				JSON.stringify([...echoStreamServerState, serverEchoStream(id, hashtag, true)])
+			);
+
+			return true;
 		} else {
-			console.log("No echoStream was found in the server state");
+			return false;
 		}
 	} catch (e) {
-		console.error(e);
+		console.log(e);
+
+		throw new Error("Couldn't start a session. Is Redis server active?");
 	}
 };
 
-export const getPidsOfAllProcessesExceptMain = (stoutResponse: string): number[] => {
-	const allProcessPids = stoutResponse
-		.split("\n")
-		.filter(process => !process.match(/grep node/))
-		.map(process => (process.match(/\d{5}/) ? process.match(/\d{5}/)![0] : null))
-		.map(pid => Number(pid))
-		.filter(pid => pid !== 0);
+export const getEchoStreamServerState = (redisClient: RedisClient) => async () => {
+	const redisGetAsync = promisify(redisClient.get).bind(redisClient);
 
-	const mainProcPid = process.pid;
-	const mainProcParentProcPid = process.ppid;
+	const res = await redisGetAsync("echoStreamServerState");
 
-	const processesToKill = allProcessPids.filter(
-		pid => pid !== mainProcPid && pid !== mainProcParentProcPid
-	);
+	if (res) {
+		const echoStreamServerState = JSON.parse(res) as ServerEchoStream[];
 
-	return processesToKill;
+		return echoStreamServerState;
+	} else {
+		return null;
+	}
 };
 
-export const killAllChildProcesses = (req: Request) => {
-	exec("ps |grep node|grep -v parcel", (err, stout) => {
-		if (!err) {
-			const processesToKill = getPidsOfAllProcessesExceptMain(stout);
+export const removeEchoStreamFromServerState = (redisClient: RedisClient) => async (
+	echoStreamId: string
+) => {
+	try {
+		const redisGetAsync = promisify(redisClient.get).bind(redisClient);
 
-			processesToKill.forEach(pid => {
-				console.log(`ChildProcess ${pid} was killed!`);
-				process.kill(pid);
-			});
+		const res = await redisGetAsync("echoStreamServerState");
+
+		if (res) {
+			const echoStreamServerState = JSON.parse(res) as ServerEchoStream[];
+
+			redisClient.set(
+				"echoStreamServerState",
+				JSON.stringify(echoStreamServerState.filter(stream => stream.id !== echoStreamId))
+			);
 		} else {
-			console.error(err);
+			throw new Error("Couldn't get the stream server state from Redis.");
 		}
-	});
+	} catch (e) {
+		console.log(e);
+	}
 };
 
-export const removeAllStreamsFromServerState = (req: Request) =>
-	(req.app.locals.echoStreamServerState = []);
+export const removeAllStreamsFromServerState = (redisClient: RedisClient) => async () => {
+	try {
+		const redisGetAsync = promisify(redisClient.get).bind(redisClient);
+
+		const res = await redisGetAsync("echoStreamServerState");
+
+		if (res) {
+			redisClient.set("echoStreamServerState", JSON.stringify([]));
+
+			console.log("Server state was cleared!");
+		} else {
+			throw new Error("Couldn't get the stream server state from Redis.");
+		}
+	} catch (e) {
+		console.log(e);
+	}
+};
+
+export const shutDownAndCleanUpAfterEchoStream = (twitterStream: TwitterStream) => {
+	twitterStream.stopTwitterStream();
+
+	twitterStream.removeAllListeners();
+};

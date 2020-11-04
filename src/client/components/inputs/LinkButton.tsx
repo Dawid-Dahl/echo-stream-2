@@ -30,9 +30,9 @@ type WrapperProps = {
 };
 
 const Wrapper = styled.div<WrapperProps>`
-	overflow: hidden;
 	border-radius: var(--border-radius);
 	margin: 1em;
+	overflow: hidden;
 
 	a {
 		text-decoration: none;

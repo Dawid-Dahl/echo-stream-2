@@ -8,6 +8,12 @@ config({
 
 //SYNC
 
+export const addEchoStreams = (payload: ClientEchoStream[]) =>
+	({
+		type: "ADD_ECHO_STREAMS",
+		payload,
+	} as const);
+
 export const addEchoStream = (payload: ClientEchoStream) =>
 	({
 		type: "ADD_ECHO_STREAM",
@@ -37,9 +43,9 @@ export const asyncAddEchoStream = (hashtag: string): AppThunk => async dispatch 
 	});
 
 	if (res.ok) {
-		const echoStream: ClientEchoStream = await res.json();
+		const echoStreamServerState: string = await res.json();
 
-		dispatch(addEchoStream(echoStream));
+		dispatch(addEchoStreams(JSON.parse(echoStreamServerState)));
 	}
 };
 
@@ -53,9 +59,9 @@ export const asyncRemoveEchoStream = (id: string): AppThunk => async dispatch =>
 	});
 
 	if (res.ok) {
-		const data: {echoStreamId: string} = await res.json();
+		const echoStreamServerState: string = await res.json();
 
-		dispatch(stopEchoStream(data.echoStreamId));
+		dispatch(addEchoStreams(JSON.parse(echoStreamServerState)));
 	}
 };
 
@@ -70,6 +76,7 @@ export const asyncRemoveAllEchoStreams = (): AppThunk => async dispatch => {
 };
 
 export type EchoStreamActionTypes =
+	| ReturnType<typeof addEchoStreams>
 	| ReturnType<typeof addEchoStream>
 	| ReturnType<typeof stopEchoStream>
 	| ReturnType<typeof stopAllEchoStreams>;

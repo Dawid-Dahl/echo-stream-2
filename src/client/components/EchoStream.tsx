@@ -67,7 +67,6 @@ const Wrapper = styled.div`
 
 	@media only screen and (max-width: 427px) {
 		display: block;
-		justify-content: center;
 
 		p {
 			margin: 0.3em 0 0 0;
@@ -79,4 +78,8 @@ const ButtonWrapper = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	@media only screen and (max-width: 427px) {
+		justify-content: space-evenly;
+	}
 `;
