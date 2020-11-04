@@ -2,10 +2,11 @@ import crypto from "crypto";
 import {ServerEchoStream} from "./serverEchoStream";
 import {promisify} from "util";
 import {RedisClient} from "redis";
+import TwitterStream from "./TwitterStream";
 
 export const generateId = (length: number) => crypto.randomBytes(length).toString("hex");
 
-export const saveEchoStreamInServerState = (
+export const addEchoStreamToServerState = (
 	redisClient: RedisClient,
 	serverEchoStream: (id: string, hashtag: string, active: boolean) => ServerEchoStream
 ) => async (id: string, hashtag: string) => {
@@ -47,7 +48,7 @@ export const getEchoStreamServerState = (redisClient: RedisClient) => async () =
 	}
 };
 
-export const removeStreamFromServerState = (redisClient: RedisClient) => async (
+export const removeEchoStreamFromServerState = (redisClient: RedisClient) => async (
 	echoStreamId: string
 ) => {
 	try {
@@ -86,4 +87,10 @@ export const removeAllStreamsFromServerState = (redisClient: RedisClient) => asy
 	} catch (e) {
 		console.log(e);
 	}
+};
+
+export const shutDownAndCleanUpAfterEchoStream = (twitterStream: TwitterStream) => {
+	twitterStream.stopTwitterStream();
+
+	twitterStream.removeAllListeners("tweet");
 };

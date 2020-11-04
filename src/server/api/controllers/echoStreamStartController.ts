@@ -1,8 +1,13 @@
 import {Request, Response} from "express-serve-static-core";
-import {redisClient} from "../../server";
+import {redisClient, twitterStream} from "../../server";
 import {serverEchoStream} from "../utils/serverEchoStream";
 import {startEchoStream} from "../utils/startEchoStream";
-import {generateId, getEchoStreamServerState, saveEchoStreamInServerState} from "../utils/util";
+import {
+	generateId,
+	getEchoStreamServerState,
+	addEchoStreamToServerState,
+	shutDownAndCleanUpAfterEchoStream,
+} from "../utils/util";
 
 const echoStreamStartController = async (req: Request, res: Response) => {
 	try {
@@ -10,11 +15,13 @@ const echoStreamStartController = async (req: Request, res: Response) => {
 
 		const id = generateId(12);
 
-		await saveEchoStreamInServerState(redisClient, serverEchoStream)(id, hashtag);
+		await addEchoStreamToServerState(redisClient, serverEchoStream)(id, hashtag);
 
 		const echoStreamServerState = await getEchoStreamServerState(redisClient)();
 
 		if (echoStreamServerState) {
+			shutDownAndCleanUpAfterEchoStream(twitterStream);
+
 			const clientState = await startEchoStream(echoStreamServerState);
 
 			if (clientState) {

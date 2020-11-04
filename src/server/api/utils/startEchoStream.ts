@@ -1,7 +1,7 @@
 import {clientEchoStream, ClientEchoStream} from "../../../client/utils/clientEchoStream";
 import {twitterStream} from "../../server";
 import {ServerEchoStream} from "./serverEchoStream";
-import {initIoNameSpaceAndStartStreaming} from "./initIoNameSpaceAndStartStreaming";
+import {initIoNameSpaceAndStartEmitting} from "./initIoNameSpaceAndStartEmitting";
 
 export const startEchoStream = async (
 	echoStreamServerState: ServerEchoStream[]
@@ -9,10 +9,8 @@ export const startEchoStream = async (
 	try {
 		twitterStream.startTwitterStream(echoStreamServerState.map(state => state.hashtag));
 
-		twitterStream.removeAllListeners("tweet");
-
 		echoStreamServerState.forEach(echoStreamState => {
-			initIoNameSpaceAndStartStreaming(echoStreamState);
+			initIoNameSpaceAndStartEmitting(echoStreamState);
 		});
 
 		const echoStreamClientState = echoStreamServerState.map(({id, hashtag, active}) =>

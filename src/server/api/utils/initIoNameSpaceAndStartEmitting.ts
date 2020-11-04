@@ -1,9 +1,8 @@
 import {ioServer, redisClient, twitterStream} from "../../server";
-import {fork} from "child_process";
 import {ServerEchoStream, serverEchoStream} from "./serverEchoStream";
-import {saveEchoStreamInServerState} from "./util";
+import {addEchoStreamToServerState} from "./util";
 
-export const initIoNameSpaceAndStartStreaming = ({id, hashtag}: ServerEchoStream) => {
+export const initIoNameSpaceAndStartEmitting = ({id, hashtag}: ServerEchoStream) => {
 	twitterStream.on("tweet", tweet => {
 		const text = tweet.extended_tweet
 			? tweet.extended_tweet.full_text
@@ -20,7 +19,7 @@ export const initIoNameSpaceAndStartStreaming = ({id, hashtag}: ServerEchoStream
 
 	const childProcess = fork(`${__dirname}/forkChildToInitTwitStream.ts`);
 
-	saveEchoStreamInServerState(redisClient, serverEchoStream)(id, hashtag);
+	addEchoStreamToServerState(redisClient, serverEchoStream)(id, hashtag);
 
 	childProcess.send(hashtag);
 

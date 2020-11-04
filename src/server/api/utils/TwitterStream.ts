@@ -15,8 +15,6 @@ class TwitterStream extends EventEmitter {
 	}
 
 	startTwitterStream(hashtag: string[]) {
-		this.stopTwitterStream();
-
 		console.log("Starting the Twit Stream");
 
 		this.twitStream = T.stream("statuses/filter", {
