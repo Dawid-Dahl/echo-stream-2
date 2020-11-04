@@ -28,7 +28,22 @@ export const saveEchoStreamInServerState = (
 		}
 	} catch (e) {
 		console.log(e);
-		return false;
+
+		throw new Error("Couldn't start a session. Is Redis server active?");
+	}
+};
+
+export const getEchoStreamServerState = (redisClient: RedisClient) => async () => {
+	const redisGetAsync = promisify(redisClient.get).bind(redisClient);
+
+	const res = await redisGetAsync("echoStreamServerState");
+
+	if (res) {
+		const echoStreamServerState = JSON.parse(res) as ServerEchoStream[];
+
+		return echoStreamServerState;
+	} else {
+		return null;
 	}
 };
 
@@ -63,6 +78,8 @@ export const removeAllStreamsFromServerState = (redisClient: RedisClient) => asy
 
 		if (res) {
 			redisClient.set("echoStreamServerState", JSON.stringify([]));
+
+			console.log("Server state was cleared!");
 		} else {
 			throw new Error("Couldn't get the stream server state from Redis.");
 		}

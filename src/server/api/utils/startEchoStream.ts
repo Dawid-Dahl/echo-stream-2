@@ -1,23 +1,25 @@
 import {clientEchoStream, ClientEchoStream} from "../../../client/utils/clientEchoStream";
-import {generateId} from "./util";
-import {Request} from "express-serve-static-core";
 import {twitterStream} from "../../server";
+import {ServerEchoStream} from "./serverEchoStream";
+import {initIoNameSpaceAndStartStreaming} from "./initIoNameSpaceAndStartStreaming";
 
-export const startEchoStream = async (req: Request): Promise<ClientEchoStream | null> => {
+export const startEchoStream = async (
+	echoStreamServerState: ServerEchoStream[]
+): Promise<ClientEchoStream[] | null> => {
 	try {
-		const hashtag = req.body.hashtag as string;
+		twitterStream.startTwitterStream(echoStreamServerState.map(state => state.hashtag));
 
-		const id = generateId(12);
+		twitterStream.removeAllListeners("tweet");
 
-		twitterStream.startTwitterStream(hashtag);
-
-		twitterStream.on("tweet", tweet => {
-			console.log(tweet.extended_tweet ? tweet.extended_tweet.full_text : tweet.text);
+		echoStreamServerState.forEach(echoStreamState => {
+			initIoNameSpaceAndStartStreaming(echoStreamState);
 		});
 
-		/* initIoNameSpaceAndStartStreaming(id, hashtag); */
+		const echoStreamClientState = echoStreamServerState.map(({id, hashtag, active}) =>
+			clientEchoStream(id, hashtag, active)
+		);
 
-		return clientEchoStream(id, hashtag, true);
+		return echoStreamClientState;
 	} catch (e) {
 		console.error(e);
 

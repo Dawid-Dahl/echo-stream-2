@@ -32,9 +32,9 @@ export default Button;
 type WrapperProps = Pick<Props, "kind">;
 
 const Wrapper = styled.div<WrapperProps>`
-	overflow: hidden;
 	border-radius: var(--border-radius);
 	margin: 1em;
+	overflow: hidden;
 
 	button {
 		padding: 0.8em;

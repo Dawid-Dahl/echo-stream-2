@@ -14,13 +14,13 @@ class TwitterStream extends EventEmitter {
 		});
 	}
 
-	startTwitterStream(hashtag: string) {
+	startTwitterStream(hashtag: string[]) {
 		this.stopTwitterStream();
 
 		console.log("Starting the Twit Stream");
 
 		this.twitStream = T.stream("statuses/filter", {
-			track: `#${hashtag}` ?? "#BACKUPHASHTAG",
+			track: hashtag.map(hashtag => `#${hashtag}`),
 		});
 
 		this.twitStream.on("tweet", tweet => {
