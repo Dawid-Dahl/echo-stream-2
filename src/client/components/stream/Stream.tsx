@@ -15,16 +15,16 @@ type Props = {};
 
 const Stream: React.FC<Props> = () => {
 	const query = useLocation();
-	const echoStreams = useSelector((state: RootState) => state.echoStreamReducer.echoStreams);
+	//const echoStreams = useSelector((state: RootState) => state.echoStreamReducer.echoStreams);
 
-	const echoStreamId = query.pathname.split("/").slice(-1)[0];
+	const echoStreamId = query.pathname.split("/").slice(-2)[0];
 
-	const hashtag = echoStreams.find(stream => stream.id === echoStreamId).hashtag;
+	const hashtag = query.pathname.split("/").slice(-1)[0];
 
 	const [echoes, setEchoes] = useState<Echo[]>([]);
 
 	useEffect(() => {
-		const socket = io(`${process.env.SERVER_URL}/${hashtag}`);
+		const socket = io(`${process.env.SERVER_URL}/${echoStreamId}/${hashtag}`);
 
 		socket.on("connect", () => {
 			console.log("Socket connection opened!");

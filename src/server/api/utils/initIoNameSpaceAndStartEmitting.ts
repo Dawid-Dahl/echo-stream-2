@@ -1,8 +1,8 @@
 import {ioServer, twitterStream} from "../../server";
 import {ServerEchoStream} from "./serverEchoStream";
 
-export const initIoNameSpaceAndStartEmitting = ({hashtag}: ServerEchoStream) => {
-	const hashtagNameSpace = ioServer.of(`/${hashtag}`).on("connection", socket => {
+export const initIoNameSpaceAndStartEmitting = ({id, hashtag}: ServerEchoStream) => {
+	const hashtagNameSpace = ioServer.of(`/${id}/${hashtag}`).on("connection", socket => {
 		console.log(`Client connected to ${hashtag} namespace.`);
 	});
 

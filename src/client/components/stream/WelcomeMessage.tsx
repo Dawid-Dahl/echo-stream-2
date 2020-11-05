@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import {useDispatch} from "react-redux";
 import {SocialMediaPlatforms} from "../../types/types";
+import {Link} from "react-router-dom";
 
 export type Echo = {
 	id: string;
@@ -27,8 +28,10 @@ const WelcomeMessage: React.FC<Props> = ({hashtag}) => {
 		</Wrapper>
 	) : (
 		<Wrapper>
-			<h2>Welcome to the Echo Stream!</h2>
-			<h3>Click ctrl + Q to set the hashtag</h3>
+			<h2>No Echo Stream could be found!</h2>
+			<h3>
+				Click <Link to="/">here</Link> to go back to the dashboard.
+			</h3>
 		</Wrapper>
 	);
 };

@@ -29,7 +29,7 @@ const EchoStream: React.FC<Props> = ({id, hashtag}) => {
 					<LinkButton
 						dataAttribute={{key: "echostream-id", value: id}}
 						title="Go!"
-						linkTo={`/streams/${hashtag}`}
+						linkTo={`/streams/${id}/${hashtag}`}
 						kind="normal"
 					/>
 					<Button
