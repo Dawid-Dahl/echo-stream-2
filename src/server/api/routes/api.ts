@@ -8,8 +8,10 @@ const apiRouter = express.Router();
 apiRouter.get("/ping", (req, res) => {
 	redisClient.get("echoStreamServerState", redis.print);
 
-	res.send("Pong!");
+	res.json("Pong");
 });
+
+apiRouter.get("/get-sid", (req, res) => res.json({sessionId: req.sessionID}));
 
 apiRouter.use("/echo-stream", echoStreamRouter);
 

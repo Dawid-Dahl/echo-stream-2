@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {useLocation} from "react-router";
 import styled from "styled-components";
-import {RootState} from "../../store/store";
 import {ValueOf} from "../../types/types";
 import echoConverter from "../../utils/echoConverter";
 import {twitterData} from "../../utils/twitter-data/twitterData";
@@ -15,7 +14,6 @@ type Props = {};
 
 const Stream: React.FC<Props> = () => {
 	const query = useLocation();
-	//const echoStreams = useSelector((state: RootState) => state.echoStreamReducer.echoStreams);
 
 	const echoStreamId = query.pathname.split("/").slice(-2)[0];
 

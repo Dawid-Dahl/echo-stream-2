@@ -15,7 +15,11 @@ const echoStreamStartController = async (req: Request, res: Response) => {
 
 		const id = generateId(12);
 
-		await addEchoStreamToServerState(redisClient, serverEchoStream)(id, hashtag);
+		await addEchoStreamToServerState(redisClient, serverEchoStream)(
+			id,
+			hashtag,
+			req.sessionID ?? ""
+		);
 
 		const echoStreamServerState = await getEchoStreamServerState(redisClient)();
 

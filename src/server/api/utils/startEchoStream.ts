@@ -13,8 +13,8 @@ export const startEchoStream = async (
 			initIoNameSpaceAndStartEmitting(echoStreamState);
 		});
 
-		const echoStreamClientState = echoStreamServerState.map(({id, hashtag, active}) =>
-			clientEchoStream(id, hashtag, active)
+		const echoStreamClientState = echoStreamServerState.map(({id, hashtag, creator, active}) =>
+			clientEchoStream(id, hashtag, creator, active)
 		);
 
 		return echoStreamClientState;

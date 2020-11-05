@@ -8,8 +8,13 @@ export const generateId = (length: number) => crypto.randomBytes(length).toStrin
 
 export const addEchoStreamToServerState = (
 	redisClient: RedisClient,
-	serverEchoStream: (id: string, hashtag: string, active: boolean) => ServerEchoStream
-) => async (id: string, hashtag: string) => {
+	serverEchoStream: (
+		id: string,
+		hashtag: string,
+		creator: string,
+		active: boolean
+	) => ServerEchoStream
+) => async (id: string, hashtag: string, creator: string) => {
 	try {
 		const redisGetAsync = promisify(redisClient.get).bind(redisClient);
 
@@ -20,7 +25,10 @@ export const addEchoStreamToServerState = (
 
 			redisClient.set(
 				"echoStreamServerState",
-				JSON.stringify([...echoStreamServerState, serverEchoStream(id, hashtag, true)])
+				JSON.stringify([
+					...echoStreamServerState,
+					serverEchoStream(id, hashtag, creator, true),
+				])
 			);
 
 			return true;

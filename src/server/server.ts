@@ -20,7 +20,7 @@ export const redisClient = redis.createClient();
 app.use(
 	session({
 		store: new RedisStore({client: redisClient}),
-		secret: "8374639847563",
+		secret: process.env.SESSION_STORE_SECRET as string,
 		saveUninitialized: true,
 		resave: false,
 	})
@@ -33,7 +33,12 @@ app.use(function (req, res, next) {
 	next();
 });
 app.use(express.json());
-app.use(cors());
+app.use(
+	cors({
+		origin: process.env.CLIENT_URL,
+		credentials: true,
+	})
+);
 app.use(morgan("dev"));
 
 redisClient.set("echoStreamServerState", JSON.stringify([]));

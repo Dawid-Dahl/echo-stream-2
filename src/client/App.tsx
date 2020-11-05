@@ -1,25 +1,20 @@
 import React, {useEffect} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import styled from "styled-components";
-import {asyncRemoveAllEchoStreams} from "./actions/echoStreamActions";
+import {asyncGetAllEchoStreams} from "./actions/echoStreamActions";
+import {asyncGetSessionId} from "./actions/sessionActions";
 import Streams from "./components/Streams";
 import StreamStarter from "./components/StreamStarter";
-import {RootState} from "./store/store";
 
 const App: React.FC = () => {
-	const echoStreamReducer = useSelector(
-		(state: RootState) => state.echoStreamReducer.echoStreams
-	);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (process.env.NODE_ENV === "development") {
-			if (echoStreamReducer.length === 0) {
-				dispatch(asyncRemoveAllEchoStreams());
-			}
-		} else {
-			//fetch active stream info from server and add to client state
-		}
+		dispatch(asyncGetSessionId());
+	}, []);
+
+	useEffect(() => {
+		dispatch(asyncGetAllEchoStreams());
 	}, []);
 
 	return (

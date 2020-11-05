@@ -1,6 +1,5 @@
 import React from "react";
 import {useDispatch} from "react-redux";
-import {Link} from "react-router-dom";
 import styled from "styled-components";
 import {asyncRemoveEchoStream} from "../actions/echoStreamActions";
 import Button from "./inputs/Button";
@@ -9,6 +8,7 @@ import LinkButton from "./inputs/LinkButton";
 type Props = {
 	id: string;
 	hashtag: string;
+	creator: string;
 	active: boolean;
 };
 

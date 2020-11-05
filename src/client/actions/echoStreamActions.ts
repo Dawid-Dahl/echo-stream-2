@@ -14,12 +14,6 @@ export const addEchoStreams = (payload: ClientEchoStream[]) =>
 		payload,
 	} as const);
 
-export const addEchoStream = (payload: ClientEchoStream) =>
-	({
-		type: "ADD_ECHO_STREAM",
-		payload,
-	} as const);
-
 export const stopEchoStream = (payload: ClientEchoStream["id"]) =>
 	({
 		type: "STOP_ECHO_STREAM",
@@ -36,6 +30,7 @@ export const stopAllEchoStreams = () =>
 export const asyncAddEchoStream = (hashtag: string): AppThunk => async dispatch => {
 	const res = await fetch(`${process.env.SERVER_URL}/api/echo-stream/start`, {
 		method: "POST",
+		credentials: "include",
 		body: JSON.stringify({hashtag}),
 		headers: {
 			"Content-Type": "application/json",
@@ -52,7 +47,24 @@ export const asyncAddEchoStream = (hashtag: string): AppThunk => async dispatch 
 export const asyncRemoveEchoStream = (id: string): AppThunk => async dispatch => {
 	const res = await fetch(`${process.env.SERVER_URL}/api/echo-stream/stop`, {
 		method: "DELETE",
+		credentials: "include",
 		body: JSON.stringify({id}),
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+	if (res.ok) {
+		const echoStreamServerState: string = await res.json();
+
+		dispatch(addEchoStreams(JSON.parse(echoStreamServerState)));
+	}
+};
+
+export const asyncGetAllEchoStreams = (): AppThunk => async dispatch => {
+	const res = await fetch(`${process.env.SERVER_URL}/api/echo-stream/get-all`, {
+		method: "GET",
+		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -67,6 +79,7 @@ export const asyncRemoveEchoStream = (id: string): AppThunk => async dispatch =>
 
 export const asyncRemoveAllEchoStreams = (): AppThunk => async dispatch => {
 	const res = await fetch(`${process.env.SERVER_URL}/api/echo-stream/clear-server-state`, {
+		credentials: "include",
 		method: "DELETE",
 	});
 
@@ -77,6 +90,5 @@ export const asyncRemoveAllEchoStreams = (): AppThunk => async dispatch => {
 
 export type EchoStreamActionTypes =
 	| ReturnType<typeof addEchoStreams>
-	| ReturnType<typeof addEchoStream>
 	| ReturnType<typeof stopEchoStream>
 	| ReturnType<typeof stopAllEchoStreams>;

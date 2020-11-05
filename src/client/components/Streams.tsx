@@ -6,12 +6,22 @@ import EchoStream from "./EchoStream";
 
 const Streams: React.FC = () => {
 	const {echoStreams} = useSelector((state: RootState) => state.echoStreamReducer);
+	const sessionId = useSelector((state: RootState) => state.sessionReducer.sessionId);
 
 	return (
 		<Wrapper>
-			{echoStreams.map(({id, hashtag, active}) => (
-				<EchoStream key={id} id={id} hashtag={hashtag} active={active} />
-			))}
+			{echoStreams.map(
+				({id, hashtag, creator, active}) =>
+					creator === sessionId && (
+						<EchoStream
+							key={id}
+							id={id}
+							hashtag={hashtag}
+							creator={creator}
+							active={active}
+						/>
+					)
+			)}
 		</Wrapper>
 	);
 };
