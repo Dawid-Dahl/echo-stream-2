@@ -1,9 +1,9 @@
 import {ioServer, twitterStream} from "../../server";
 import {ServerEchoStream} from "./serverEchoStream";
 
-export const initIoNameSpaceAndStartEmitting = ({id, hashtag}: ServerEchoStream) => {
-	const idNameSpace = ioServer.of(`/${id}`).on("connection", socket => {
-		console.log(`Client connected to ${id} namespace. The hashtag is #${hashtag}.`);
+export const initIoNameSpaceAndStartEmitting = ({hashtag}: ServerEchoStream) => {
+	const hashtagNameSpace = ioServer.of(`/${hashtag}`).on("connection", socket => {
+		console.log(`Client connected to ${hashtag} namespace.`);
 	});
 
 	twitterStream.on("tweet", tweet => {
@@ -14,7 +14,7 @@ export const initIoNameSpaceAndStartEmitting = ({id, hashtag}: ServerEchoStream)
 			: tweet.text;
 
 		if (text.toLowerCase().includes(hashtag)) {
-			idNameSpace.emit("io-message", {tweet});
+			hashtagNameSpace.emit("io-message", {tweet});
 		}
 	});
 };

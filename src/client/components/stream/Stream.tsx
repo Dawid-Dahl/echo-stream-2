@@ -24,7 +24,7 @@ const Stream: React.FC<Props> = () => {
 	const [echoes, setEchoes] = useState<Echo[]>([]);
 
 	useEffect(() => {
-		const socket = io(`${process.env.SERVER_URL}/${echoStreamId}`);
+		const socket = io(`${process.env.SERVER_URL}/${hashtag}`);
 
 		socket.on("connect", () => {
 			console.log("Socket connection opened!");
@@ -41,7 +41,7 @@ const Stream: React.FC<Props> = () => {
 		});
 
 		return () => {
-			console.log(`Closing socket: ${echoStreamId}`);
+			console.log(`Closing socket. Id: ${echoStreamId}, hashtag: ${hashtag}`);
 			socket.close();
 		};
 	}, []);

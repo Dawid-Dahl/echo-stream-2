@@ -12,7 +12,7 @@ ReactDOM.render(
 	<Provider store={store}>
 		<Router history={history as History<History>}>
 			<Switch>
-				<Route path="/streams/:echoStreamId" component={Stream} />
+				<Route path="/streams/:echoStreamHashtag" component={Stream} />
 				<Route path="/" component={App} />
 			</Switch>
 		</Router>
