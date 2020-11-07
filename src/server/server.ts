@@ -15,7 +15,11 @@ const PORT = process.env.PORT || 5000;
 
 const RedisStore = require("connect-redis")(session);
 
-export const redisClient = redis.createClient();
+if (!process.env.REDIS_URL) {
+	throw new Error("REDIS_URL not found.");
+}
+
+export const redisClient = redis.createClient(process.env.REDIS_URL);
 
 app.use(
 	session({
