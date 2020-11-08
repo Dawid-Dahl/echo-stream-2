@@ -49,6 +49,7 @@ const Wrapper = styled.div<WrapperProps>`
 		background-color: ${props =>
 			props.kind === "normal" ? "var(--button-color);" : "var(--delete-color);"};
 		font-size: 1em;
+		border-radius: var(--border-radius);
 
 		:hover {
 			background-color: ${props =>
