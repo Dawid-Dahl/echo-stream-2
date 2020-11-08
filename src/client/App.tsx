@@ -46,6 +46,10 @@ const Wrapper = styled.div`
 const Header = styled.h1`
 	padding: 1em;
 	text-align: center;
+
+	@media only screen and (max-width: 474px) {
+		font-size: 1.5em;
+	}
 `;
 
 export default App;
