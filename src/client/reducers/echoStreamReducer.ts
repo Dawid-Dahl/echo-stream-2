@@ -19,11 +19,6 @@ export const echoStreamReducer = (
 				...state,
 				echoStreams: action.payload,
 			};
-		case "ADD_ECHO_STREAM":
-			return {
-				...state,
-				echoStreams: [...state.echoStreams, action.payload],
-			};
 		case "STOP_ECHO_STREAM":
 			return {
 				...state,
@@ -33,6 +28,20 @@ export const echoStreamReducer = (
 			return {
 				...state,
 				echoStreams: [],
+			};
+		case "ACTIVATE_ECHO_STREAMS":
+			return {
+				...state,
+				echoStreams: state.echoStreams.map(echoStream =>
+					echoStream.id === action.payload ? {...echoStream, active: true} : echoStream
+				),
+			};
+		case "INACTIVATE_ECHO_STREAMS":
+			return {
+				...state,
+				echoStreams: state.echoStreams.map(echoStream =>
+					echoStream.id === action.payload ? {...echoStream, active: false} : echoStream
+				),
 			};
 		default:
 			return state;

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useLocation} from "react-router";
 import styled from "styled-components";
 import {ValueOf} from "../../types/types";
@@ -9,6 +9,10 @@ import {Echo} from "../echo/Echo";
 import StreamHeader from "./StreamHeader";
 import WelcomeMessage from "./WelcomeMessage";
 import io from "socket.io-client";
+import {asyncIsEchoStreamActive} from "../../actions/echoStreamActions";
+import {checkIfStreamIsActive} from "../../utils/utils";
+import OfflineMessage from "./OfflineMessage";
+import Loading from "../Loading";
 
 type Props = {};
 
@@ -20,6 +24,16 @@ const Stream: React.FC<Props> = () => {
 	const hashtag = query.pathname.split("/").slice(-1)[0];
 
 	const [echoes, setEchoes] = useState<Echo[]>([]);
+	const [isLoading, setIsLoading] = useState(false);
+	const [isStreamActive, setIsStreamActive] = useState(true);
+
+	useEffect(() => {
+		setIsLoading(true);
+		checkIfStreamIsActive(echoStreamId).then(res => {
+			setIsStreamActive(res);
+			setIsLoading(false);
+		});
+	}, []);
 
 	useEffect(() => {
 		const socket = io(`${process.env.SERVER_URL}/${echoStreamId}/${hashtag}`);
@@ -47,7 +61,12 @@ const Stream: React.FC<Props> = () => {
 	return (
 		<Wrapper>
 			<StreamHeader text="DELTA I KONVERSATIONEN PÅ TWITTER" hashtag={hashtag} />
-			{echoes.length === 0 ? (
+
+			{isLoading ? (
+				<Loading />
+			) : !isStreamActive ? (
+				<OfflineMessage />
+			) : echoes.length === 0 ? (
 				<WelcomeMessage hashtag={hashtag} />
 			) : (
 				echoes.map(echo => (

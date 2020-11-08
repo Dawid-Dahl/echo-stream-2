@@ -1,11 +1,14 @@
 import express from "express";
 import {redisClient} from "../../server";
 import echoStreamGetAllController from "../controllers/echoStreamGetAllController";
+import echoStreamGetController from "../controllers/echoStreamGetController";
 import echoStreamStartController from "../controllers/echoStreamStartController";
 import echoStreamStopController from "../controllers/echoStreamStopController";
 import {removeAllStreamsFromServerState} from "../utils/util";
 
 const echoStreamRouter = express.Router();
+
+echoStreamRouter.get("/get", echoStreamGetController);
 
 echoStreamRouter.get("/get-all", echoStreamGetAllController);
 
