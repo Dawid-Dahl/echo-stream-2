@@ -2,7 +2,7 @@ import Twit from "twit";
 import {config} from "dotenv";
 
 config({
-	path: "../.env",
+	path: "/.env",
 });
 
 console.log("TESTING", process.env.TWITTER_API_KEY);
