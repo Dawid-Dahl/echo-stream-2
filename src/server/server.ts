@@ -8,6 +8,7 @@ import io from "socket.io";
 import redis from "redis";
 import session from "express-session";
 import TwitterStream from "./api/utils/TwitterStream";
+import path from "path";
 
 export const app = express();
 
@@ -46,6 +47,10 @@ app.use(
 
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static("dist/client"));
+
+	app.get("/*", (req, res) => {
+		res.sendFile(path.join(__dirname, "dist", "client", "index.html"));
+	});
 }
 
 redisClient.set("echoStreamServerState", JSON.stringify([]));
