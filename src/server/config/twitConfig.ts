@@ -1,4 +1,9 @@
 import Twit from "twit";
+import {config} from "dotenv";
+
+config({
+	path: "../../.env",
+});
 
 const T = new Twit({
 	consumer_key: process.env.TWITTER_API_KEY ?? "",
