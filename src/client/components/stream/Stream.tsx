@@ -28,8 +28,11 @@ const Stream: React.FC<Props> = () => {
 
 	useEffect(() => {
 		const clear = setInterval(() => {
-			checkIfStreamIsActive(echoStreamId).then(res => {
-				setIsStreamActive(res);
+			checkIfStreamIsActive(echoStreamId).then(isActive => {
+				if (!isActive) {
+					setIsStreamActive(isActive);
+					clearInterval(clear);
+				}
 			});
 		}, 10000);
 		return () => clearInterval(clear);
