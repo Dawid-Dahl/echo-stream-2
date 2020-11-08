@@ -21,6 +21,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "morgan": "^1.10.0",
+    "parcel-bundler": "^1.12.4",
     "prop-types": "^15.7.2",
     "rambda": "^6.3.1",
     "react": "^17.0.1",
