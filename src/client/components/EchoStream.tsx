@@ -60,9 +60,9 @@ const Wrapper = styled.div`
 
 	p {
 		font-size: 1.5em;
-		margin-left: 1em;
 		text-align: center;
 		margin: 1em;
+		font-weight: 700;
 	}
 
 	@media only screen and (max-width: 427px) {
