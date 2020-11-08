@@ -43,13 +43,17 @@ app.use(
 		credentials: true,
 	})
 );
-app.use(morgan("dev"));
+
+if (process.env.NODE_ENV === "production") {
+	app.use(express.static("dist/client"));
+}
 
 redisClient.set("echoStreamServerState", JSON.stringify([]));
 
 app.use("/api", apiRouter);
 
 if (process.env.NODE_ENV === "development") {
+	app.use(morgan("dev"));
 	app.use(errorhandler());
 }
 

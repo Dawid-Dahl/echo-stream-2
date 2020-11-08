@@ -1,7 +1,7 @@
-import {clientEchoStream, ClientEchoStream} from "../../../client/utils/clientEchoStream";
 import {twitterStream} from "../../server";
 import {ServerEchoStream} from "./serverEchoStream";
 import {initIoNameSpaceAndStartEmitting} from "./initIoNameSpaceAndStartEmitting";
+import {clientEchoStream, ClientEchoStream} from "./clientEchoStream";
 
 export const startEchoStream = async (
 	echoStreamServerState: ServerEchoStream[]

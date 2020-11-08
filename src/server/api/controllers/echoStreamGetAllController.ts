@@ -1,6 +1,6 @@
 import {Request, Response} from "express-serve-static-core";
-import {clientEchoStream} from "../../../client/utils/clientEchoStream";
 import {redisClient} from "../../server";
+import {clientEchoStream} from "../utils/clientEchoStream";
 import {getEchoStreamServerState} from "../utils/util";
 
 const echoStreamGetAllController = async (req: Request, res: Response) => {
