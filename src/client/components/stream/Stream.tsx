@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+
 import {useLocation} from "react-router";
 import styled from "styled-components";
 import {ValueOf} from "../../types/types";
@@ -9,7 +9,6 @@ import {Echo} from "../echo/Echo";
 import StreamHeader from "./StreamHeader";
 import WelcomeMessage from "./WelcomeMessage";
 import io from "socket.io-client";
-import {asyncIsEchoStreamActive} from "../../actions/echoStreamActions";
 import {checkIfStreamIsActive} from "../../utils/utils";
 import OfflineMessage from "./OfflineMessage";
 import Loading from "../Loading";
@@ -26,6 +25,15 @@ const Stream: React.FC<Props> = () => {
 	const [echoes, setEchoes] = useState<Echo[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isStreamActive, setIsStreamActive] = useState(true);
+
+	useEffect(() => {
+		const clear = setInterval(() => {
+			checkIfStreamIsActive(echoStreamId).then(res => {
+				setIsStreamActive(res);
+			});
+		}, 10000);
+		return () => clearInterval(clear);
+	}, []);
 
 	useEffect(() => {
 		setIsLoading(true);
