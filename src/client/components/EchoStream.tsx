@@ -10,6 +10,7 @@ type Props = {
 	hashtag: string;
 	creator: string;
 	active: boolean;
+	createdAt: Date;
 };
 
 const EchoStream: React.FC<Props> = ({id, hashtag}) => {

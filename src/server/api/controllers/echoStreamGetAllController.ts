@@ -9,7 +9,8 @@ const echoStreamGetAllController = async (req: Request, res: Response) => {
 
 		if (echoStreamServerState) {
 			const echoStreamClientState = echoStreamServerState.map(
-				({id, hashtag, creator, active}) => clientEchoStream(id, hashtag, creator, active)
+				({id, hashtag, creator, active}) =>
+					clientEchoStream(id, hashtag, creator, active, new Date(Date.now()))
 			);
 
 			if (echoStreamClientState) {

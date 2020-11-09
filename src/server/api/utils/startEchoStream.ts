@@ -14,7 +14,7 @@ export const startEchoStream = async (
 		});
 
 		const echoStreamClientState = echoStreamServerState.map(({id, hashtag, creator, active}) =>
-			clientEchoStream(id, hashtag, creator, active)
+			clientEchoStream(id, hashtag, creator, active, new Date(Date.now()))
 		);
 
 		return echoStreamClientState;

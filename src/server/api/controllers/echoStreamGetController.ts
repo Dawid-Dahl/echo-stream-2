@@ -18,7 +18,9 @@ const echoStreamGetController = async (req: Request, res: Response) => {
 				const {id, hashtag, creator, active} = foundEchoStream;
 
 				res.status(200).json(
-					JSON.stringify(clientEchoStream(id, hashtag, creator, active))
+					JSON.stringify(
+						clientEchoStream(id, hashtag, creator, active, new Date(Date.now()))
+					)
 				);
 			} else {
 				res.status(404).json({message: "Couldn't find the echo stream"});

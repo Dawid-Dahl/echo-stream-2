@@ -3,7 +3,6 @@ import {ServerEchoStream} from "./serverEchoStream";
 import {promisify} from "util";
 import {RedisClient} from "redis";
 import TwitterStream from "./TwitterStream";
-import {ClientEchoStream} from "./clientEchoStream";
 
 export const generateId = (length: number) => crypto.randomBytes(length).toString("hex");
 
@@ -13,7 +12,8 @@ export const addEchoStreamToServerState = (
 		id: string,
 		hashtag: string,
 		creator: string,
-		active: boolean
+		active: boolean,
+		createdAt: Date
 	) => ServerEchoStream
 ) => async (id: string, hashtag: string, creator: string) => {
 	try {
@@ -28,7 +28,7 @@ export const addEchoStreamToServerState = (
 				"echoStreamServerState",
 				JSON.stringify([
 					...echoStreamServerState,
-					serverEchoStream(id, hashtag, creator, true),
+					serverEchoStream(id, hashtag, creator, true, new Date(Date.now())),
 				])
 			);
 

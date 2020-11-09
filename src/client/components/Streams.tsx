@@ -11,7 +11,7 @@ const Streams: React.FC = () => {
 	return (
 		<Wrapper>
 			{echoStreams.map(
-				({id, hashtag, creator, active}) =>
+				({id, hashtag, creator, active, createdAt}) =>
 					creator === sessionId && (
 						<EchoStream
 							key={id}
@@ -19,6 +19,7 @@ const Streams: React.FC = () => {
 							hashtag={hashtag}
 							creator={creator}
 							active={active}
+							createdAt={createdAt}
 						/>
 					)
 			)}

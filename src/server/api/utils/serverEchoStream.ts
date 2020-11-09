@@ -3,16 +3,19 @@ export type ServerEchoStream = {
 	hashtag: string;
 	creator: string;
 	active: boolean;
+	createdAt: Date;
 };
 
 export const serverEchoStream = (
 	id: string,
 	hashtag: string,
 	creator: string,
-	active: boolean
+	active: boolean,
+	createdAt: Date
 ): ServerEchoStream => ({
 	id,
 	hashtag,
 	creator,
 	active,
+	createdAt,
 });
