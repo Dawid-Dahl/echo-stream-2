@@ -3,7 +3,6 @@ import {ServerEchoStream} from "./serverEchoStream";
 import {promisify} from "util";
 import {RedisClient} from "redis";
 import TwitterStream from "./TwitterStream";
-import {ClientEchoStream} from "./clientEchoStream";
 
 export const generateId = (length: number) => crypto.randomBytes(length).toString("hex");
 

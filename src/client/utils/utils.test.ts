@@ -1,7 +1,6 @@
 import {
 	constructTwitterUrl,
 	removeHashtagAndSpacesFromString,
-	sanitizeString,
 	sanitizeStringUnconfig,
 	stringTrimmer,
 } from "./utils";
