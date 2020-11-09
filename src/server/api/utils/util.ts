@@ -6,6 +6,8 @@ import TwitterStream from "./TwitterStream";
 
 export const generateId = (length: number) => crypto.randomBytes(length).toString("hex");
 
+export const removeAllEchoStreamsActiveLongerThan = (time: number) => {};
+
 export const addEchoStreamToServerState = (
 	redisClient: RedisClient,
 	serverEchoStream: (
