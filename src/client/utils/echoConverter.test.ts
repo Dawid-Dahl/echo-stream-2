@@ -21,6 +21,8 @@ describe("echoConverter", () => {
 	const {tweetWithoutMedia, tweetWithUploadedImage} = twitterData;
 
 	it("should return a default echo if given the wrong data", () => {
+		jest.spyOn(console, "log").mockImplementation(() => {});
+
 		const echo = echoConverter("twitter", {wrongData: 123} as any) as Echo;
 
 		// @ts-ignore
@@ -63,9 +65,5 @@ describe("echoConverter", () => {
 
 			expect(echo).toEqual(expectedEcho.withMedia);
 		});
-	});
-
-	describe("echo with linked image", () => {
-		it("should return an echo given twitter data with a linked image", () => {});
 	});
 });
