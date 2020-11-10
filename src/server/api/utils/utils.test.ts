@@ -10,12 +10,3 @@ describe("generateId", () => {
 		expect(spy).toHaveBeenCalled();
 	});
 });
-
-/* describe('addEchoStreamToServerState', () => {
-    describe('happy path', () => {
-        it('', () => {})
-    });
-    describe('sad path', () => {
-        it('', () => {})
-    });
-}); */
