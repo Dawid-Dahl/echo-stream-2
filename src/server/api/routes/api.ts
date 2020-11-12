@@ -1,8 +1,8 @@
 import express from "express";
 import {redisClient} from "../../server";
-import {getEchoStreamServerState} from "../utils/util";
 import echoStreamRouter from "./echoStream";
 import util from "util";
+import {getEchoStreamServerState} from "../utils/redisActions";
 
 const apiRouter = express.Router();
 

@@ -4,7 +4,7 @@ import echoStreamGetAllController from "../controllers/echoStreamGetAllControlle
 import echoStreamGetController from "../controllers/echoStreamGetController";
 import echoStreamStartController from "../controllers/echoStreamStartController";
 import echoStreamStopController from "../controllers/echoStreamStopController";
-import {removeAllStreamsFromServerState} from "../utils/util";
+import {removeAllStreamsFromServerState} from "../utils/redisActions";
 
 const echoStreamRouter = express.Router();
 
@@ -12,7 +12,7 @@ echoStreamRouter.get("/get", echoStreamGetController);
 
 echoStreamRouter.get("/get-all", echoStreamGetAllController);
 
-echoStreamRouter.post("/start", echoStreamStartController);
+echoStreamRouter.post("/server", echoStreamStartController);
 
 echoStreamRouter.delete("/stop", echoStreamStopController);
 
