@@ -2,21 +2,19 @@ import {ServerEchoStream} from "./serverEchoStream";
 import {promisify} from "util";
 import {RedisClient} from "redis";
 
-export const getEchoStreamServerState = (redisClient: RedisClient) => async () => {
-	try {
-		const redisGetAsync = promisify(redisClient.get).bind(redisClient);
-
-		const res = await redisGetAsync("echoStreamServerState");
-
-		if (res) {
-			const echoStreamServerState = JSON.parse(res) as ServerEchoStream[];
-
-			return echoStreamServerState;
-		}
-	} catch (e) {
-		console.error(e);
-		throw new Error("Couldn't get the stream server state from Redis.");
-	}
+export const getEchoStreamServerState = (redisClient: RedisClient) => () => {
+	return new Promise<ServerEchoStream[] | null>((res, rej) => {
+		redisClient.get("echoStreamServerState", (err, data) => {
+			if (err) {
+				console.error(err);
+				throw new Error("Couldn't get the stream server state from Redis.");
+			} else {
+				return data ? res(JSON.parse(data) as ServerEchoStream[]) : res(null);
+			}
+		});
+	}).catch(e => {
+		throw new Error(e);
+	});
 };
 
 export const getAllEchoStreamsActiveLongerThan = (

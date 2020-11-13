@@ -40,7 +40,10 @@ describe("getEchoStreamServerState", () => {
 				JSON.parse(manyStreams)
 			);
 			expect(redisClientGetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientGetSpy.mock.calls[0][0]).toBe("echoStreamServerState");
+			expect(redisClientGetSpy).toHaveBeenCalledWith(
+				"echoStreamServerState",
+				expect.any(Function)
+			);
 		});
 		it("should return the echo stream server state if there are no active streams", async () => {
 			redisClient.get.mockImplementationOnce((k, callback) => {
@@ -49,18 +52,33 @@ describe("getEchoStreamServerState", () => {
 			});
 			await expect(getEchoStreamServerState(redisClient)()).resolves.toEqual([]);
 			expect(redisClientGetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientGetSpy.mock.calls[0][0]).toBe("echoStreamServerState");
+			expect(redisClientGetSpy).toHaveBeenCalledWith(
+				"echoStreamServerState",
+				expect.any(Function)
+			);
+		});
+		it("should resolve to null if Redis returns null", async () => {
+			redisClient.get.mockImplementationOnce((k, callback) => {
+				callback!(null, null);
+				return true;
+			});
+			await expect(getEchoStreamServerState(redisClient)()).resolves.toBe(null);
+			expect(redisClientGetSpy).toHaveBeenCalledTimes(1);
+			expect(redisClientGetSpy).toHaveBeenCalledWith(
+				"echoStreamServerState",
+				expect.any(Function)
+			);
 		});
 	});
 	describe("sad path", () => {
-		it("should throw an error if the redisClient get method throws an error", async () => {
-			redisClient.get.mockImplementationOnce(() => {
-				throw new Error();
-			});
+		it("should throw an error if the redisClient get method throws an error", () => {
+			redisClient.get.mockImplementationOnce((k: any, callback: any) =>
+				callback(new Error(""), manyStreams)
+			);
 
 			const spy = jest.spyOn(console, "error");
 			spy.mockImplementationOnce(() => {});
-			await expect(getEchoStreamServerState(redisClient)()).rejects.toThrow(
+			expect(getEchoStreamServerState(redisClient)()).rejects.toThrow(
 				"Couldn't get the stream server state from Redis."
 			);
 		});
