@@ -1,4 +1,5 @@
 import crypto from "crypto";
+/* import shutDownStreamAfterTimeout from "./shutDownStreamAfterTimeout"; */
 import {generateId} from "./util";
 
 describe("generateId", () => {
@@ -10,3 +11,26 @@ describe("generateId", () => {
 		expect(spy).toHaveBeenCalled();
 	});
 });
+
+//FINISH THIS
+/* describe("shutDownStreamAfterTimeout", () => {
+	describe("happy path", () => {
+		it("should shut down a stream after ten seconds", () => {
+			const tenSeconds = 1000 * 15;
+			expect(shutDownStreamAfterTimeout(tenSeconds, streamId)).resolves.toBe(true);
+		});
+	});
+	describe("sad path", () => {
+		it("", () => {});
+	});
+}); */
+
+//FINISH THIS
+/* describe("stopEchoStream", () => {
+	describe("happy path", () => {
+		it("should stop an echo stream", () => {});
+	});
+	describe("sad path", () => {
+		it("", () => {});
+	});
+}); */

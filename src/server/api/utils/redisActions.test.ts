@@ -53,14 +53,16 @@ describe("getEchoStreamServerState", () => {
 		});
 	});
 	describe("sad path", () => {
-		it("should log any errors to the console", async () => {
+		it("should throw an error if the redisClient get method throws an error", async () => {
 			redisClient.get.mockImplementationOnce(() => {
 				throw new Error();
 			});
+
 			const spy = jest.spyOn(console, "error");
 			spy.mockImplementationOnce(() => {});
-			await getEchoStreamServerState(redisClient)();
-			expect(spy).toHaveBeenCalledTimes(1);
+			await expect(getEchoStreamServerState(redisClient)()).rejects.toThrow(
+				"Couldn't get the stream server state from Redis."
+			);
 		});
 	});
 });
@@ -101,8 +103,8 @@ describe("getAllEchoStreamsActiveLongerThan", () => {
 			).toEqual(threeStreamsOneCreatedNowTwoCreatedTwoDaysAgo.slice(1));
 		});
 	});
-	describe("sad path", () => {
-		it("should throw an error if the redisClient get method throws an error", async () => {});
+	it("should return an empty array if there are no streams", () => {
+		expect(getAllEchoStreamsActiveLongerThan(24 * 60 * 60 * 1000, [])).toEqual([]);
 	});
 });
 

@@ -12,11 +12,10 @@ export const getEchoStreamServerState = (redisClient: RedisClient) => async () =
 			const echoStreamServerState = JSON.parse(res) as ServerEchoStream[];
 
 			return echoStreamServerState;
-		} else {
-			return null;
 		}
 	} catch (e) {
 		console.error(e);
+		throw new Error("Couldn't get the stream server state from Redis.");
 	}
 };
 

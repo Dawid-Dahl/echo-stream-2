@@ -3,6 +3,7 @@ import {redisClient} from "../../server";
 import {twitterStream} from "../../server";
 import {addEchoStreamToServerState, getEchoStreamServerState} from "../utils/redisActions";
 import {serverEchoStream} from "../utils/serverEchoStream";
+import shutDownStreamAfterTimeout from "../utils/shutDownStreamAfterTimeout";
 import {startEchoStream} from "../utils/startEchoStream";
 import {generateId, shutDownAndCleanUpAfterEchoStream} from "../utils/util";
 
@@ -24,6 +25,8 @@ const echoStreamStartController = async (req: Request, res: Response) => {
 			shutDownAndCleanUpAfterEchoStream(twitterStream);
 
 			const clientState = await startEchoStream(echoStreamServerState);
+
+			shutDownStreamAfterTimeout(1000 * 10, id);
 
 			if (clientState) {
 				res.status(200).json(JSON.stringify(clientState));

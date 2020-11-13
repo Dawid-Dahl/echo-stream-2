@@ -1,18 +1,14 @@
-import {ParamsDictionary, Request, Response} from "express-serve-static-core";
-import QueryString from "qs";
+/* import {RedisClient} from "redis";
 import {twitterStream} from "../../server";
-import {redisClient} from "../../server";
-import {getEchoStreamServerState, removeEchoStreamFromServerState} from "../utils/redisActions";
-import {startEchoStream} from "../utils/startEchoStream";
-import {shutDownAndCleanUpAfterEchoStream} from "../utils/util";
+import {getEchoStreamServerState, removeEchoStreamFromServerState} from "./redisActions";
+import {ServerEchoStream} from "./serverEchoStream";
+import {startEchoStream} from "./startEchoStream";
+import {shutDownAndCleanUpAfterEchoStream} from "./util";
 
-const echoStreamStopController = async (
-	req: Request<ParamsDictionary, any, any, QueryString.ParsedQs>,
-	res: Response<any, number>
-) => {
+const stopEchoStream = (redisClient: RedisClient) => async (
+	echoStreamId: ServerEchoStream["id"]
+): Promise<ServerEchoStream[] | null> => {
 	try {
-		const echoStreamId = req.body.id as string;
-
 		await removeEchoStreamFromServerState(redisClient)(echoStreamId);
 
 		const echoStreamServerState = await getEchoStreamServerState(redisClient)();
@@ -39,4 +35,4 @@ const echoStreamStopController = async (
 	}
 };
 
-export default echoStreamStopController;
+export default stopEchoStream; */

@@ -9,7 +9,7 @@
     "dev-start-server": "nodemon src/server/server.ts",
     "build": "tsc && parcel build src/client/index.html --out-dir dist/client",
     "dev-build": "parcel build src/client/index.html --out-dir dist/client",
-    "test": "jest"
+    "test": "jest --coverage --watchAll"
   },
   "author": "Dawid Dahl",
   "license": "ISC",
@@ -73,6 +73,8 @@
       "tsx",
       "js"
     ],
+    "rootDir": "src",
+    "coverageDirectory": "../coverage",
     "transform": {
       "\\.(ts|tsx)$": "ts-jest"
     },

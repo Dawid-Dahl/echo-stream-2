@@ -12,7 +12,7 @@ echoStreamRouter.get("/get", echoStreamGetController);
 
 echoStreamRouter.get("/get-all", echoStreamGetAllController);
 
-echoStreamRouter.post("/server", echoStreamStartController);
+echoStreamRouter.post("/start", echoStreamStartController);
 
 echoStreamRouter.delete("/stop", echoStreamStopController);
 
