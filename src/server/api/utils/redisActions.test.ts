@@ -130,6 +130,7 @@ describe("addEchoStreamToServerState", () => {
 	const {id, hashtag, creator} = JSON.parse(oneStream)[0] as ServerEchoStream;
 	describe("happy path", () => {
 		it("should add an echo stream to the server state", async () => {
+			jest.spyOn(Date, "now").mockImplementation(() => 1605204000042);
 			expect(
 				await addEchoStreamToServerState(redisClient, serverEchoStream)(
 					id,
@@ -138,9 +139,17 @@ describe("addEchoStreamToServerState", () => {
 				)
 			).toBe(true);
 			expect(redisClientGetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientGetSpy.mock.calls[0][0]).toBe("echoStreamServerState");
+			expect(redisClientGetSpy).toHaveBeenCalledWith(
+				"echoStreamServerState",
+				expect.any(Function)
+			);
+
 			expect(redisClientSetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientSetSpy.mock.calls[0][0]).toBe("echoStreamServerState");
+			expect(redisClientSetSpy).toHaveBeenCalledWith(
+				"echoStreamServerState",
+				JSON.stringify([...JSON.parse(manyStreams), ...JSON.parse(oneStream)]),
+				expect.any(Function)
+			);
 		});
 	});
 	describe("sad path", () => {

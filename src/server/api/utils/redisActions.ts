@@ -32,33 +32,39 @@ export const addEchoStreamToServerState = (
 		active: boolean,
 		createdAt: Date
 	) => ServerEchoStream
-) => async (id: string, hashtag: string, creator: string) => {
-	try {
-		const redisGetAsync = promisify(redisClient.get).bind(redisClient);
-		const redisSetAsync = promisify(redisClient.set).bind(redisClient);
+) => (id: string, hashtag: string, creator: string) => {
+	return new Promise<boolean>(res => {
+		redisClient.get("echoStreamServerState", (err, data) => {
+			if (err) {
+				console.error(err);
+				throw new Error("Couldn't get the stream server state from Redis.");
+			} else {
+				if (data) {
+					const echoStreamServerState = JSON.parse(data) as ServerEchoStream[];
 
-		const res = await redisGetAsync("echoStreamServerState");
-
-		if (res) {
-			const echoStreamServerState = JSON.parse(res) as ServerEchoStream[];
-
-			await redisSetAsync(
-				"echoStreamServerState",
-				JSON.stringify([
-					...echoStreamServerState,
-					serverEchoStream(id, hashtag, creator, true, new Date(Date.now())),
-				])
-			);
-
-			return true;
-		} else {
-			return false;
-		}
-	} catch (e) {
-		console.error(e);
-
+					redisClient.set(
+						"echoStreamServerState",
+						JSON.stringify([
+							...echoStreamServerState,
+							serverEchoStream(id, hashtag, creator, true, new Date(Date.now())),
+						]),
+						(err, response) => {
+							if (err) {
+								console.error(err);
+								throw new Error("Couldn't set the data with Redis Client.");
+							} else {
+								return res(true);
+							}
+						}
+					);
+				} else {
+					return res(false);
+				}
+			}
+		});
+	}).catch(e => {
 		throw new Error("Couldn't start a session. Is Redis server active?");
-	}
+	});
 };
 
 export const removeEchoStreamFromServerState = (redisClient: RedisClient) => async (

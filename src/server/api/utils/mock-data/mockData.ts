@@ -27,6 +27,8 @@ export const manyStreams = JSON.stringify([
 	},
 ]);
 
+export const combinedStreams = JSON.stringify([...JSON.parse(manyStreams), JSON.parse(oneStream)]);
+
 export const noStreams = JSON.stringify([]);
 
 export const oneStreamJustAdded = [
