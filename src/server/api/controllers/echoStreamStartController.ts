@@ -1,13 +1,10 @@
 import {Request, Response} from "express-serve-static-core";
-import {redisClient, twitterStream} from "../../server";
+import {redisClient} from "../../server";
+import {twitterStream} from "../../server";
+import {addEchoStreamToServerState, getEchoStreamServerState} from "../utils/redisActions";
 import {serverEchoStream} from "../utils/serverEchoStream";
 import {startEchoStream} from "../utils/startEchoStream";
-import {
-	generateId,
-	getEchoStreamServerState,
-	addEchoStreamToServerState,
-	shutDownAndCleanUpAfterEchoStream,
-} from "../utils/util";
+import {generateId, shutDownAndCleanUpAfterEchoStream} from "../utils/util";
 
 const echoStreamStartController = async (req: Request, res: Response) => {
 	try {

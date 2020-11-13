@@ -20,7 +20,11 @@ export const getEchoStreamServerState = (redisClient: RedisClient) => async () =
 	}
 };
 
-export const getAllEchoStreamsActiveLongerThan = (time: number): ServerEchoStream[] => [];
+export const getAllEchoStreamsActiveLongerThan = (
+	time: number,
+	streams: ServerEchoStream[]
+): ServerEchoStream[] =>
+	streams.filter(stream => Date.now() + time < new Date(stream.createdAt).getTime());
 
 export const addEchoStreamToServerState = (
 	redisClient: RedisClient,
@@ -34,13 +38,14 @@ export const addEchoStreamToServerState = (
 ) => async (id: string, hashtag: string, creator: string) => {
 	try {
 		const redisGetAsync = promisify(redisClient.get).bind(redisClient);
+		const redisSetAsync = promisify(redisClient.set).bind(redisClient);
 
 		const res = await redisGetAsync("echoStreamServerState");
 
 		if (res) {
 			const echoStreamServerState = JSON.parse(res) as ServerEchoStream[];
 
-			redisClient.set(
+			await redisSetAsync(
 				"echoStreamServerState",
 				JSON.stringify([
 					...echoStreamServerState,
@@ -53,7 +58,7 @@ export const addEchoStreamToServerState = (
 			return false;
 		}
 	} catch (e) {
-		console.log(e);
+		console.error(e);
 
 		throw new Error("Couldn't start a session. Is Redis server active?");
 	}
@@ -79,24 +84,28 @@ export const removeEchoStreamFromServerState = (redisClient: RedisClient) => asy
 			throw new Error("Couldn't get the stream server state from Redis.");
 		}
 	} catch (e) {
-		console.log(e);
+		console.error(e);
+
+		throw new Error("Couldn't get the stream server state from Redis.");
 	}
 };
 
 export const removeAllStreamsFromServerState = (redisClient: RedisClient) => async () => {
 	try {
 		const redisGetAsync = promisify(redisClient.get).bind(redisClient);
+		const redisSetAsync = promisify(redisClient.set).bind(redisClient);
 
 		const res = await redisGetAsync("echoStreamServerState");
 
 		if (res) {
-			redisClient.set("echoStreamServerState", JSON.stringify([]));
+			await redisSetAsync("echoStreamServerState", JSON.stringify([]));
 
 			console.log("Server state was cleared!");
 		} else {
 			throw new Error("Couldn't get the stream server state from Redis.");
 		}
 	} catch (e) {
-		console.log(e);
+		console.error(e);
+		throw new Error("Couldn't get the stream server state from Redis.");
 	}
 };

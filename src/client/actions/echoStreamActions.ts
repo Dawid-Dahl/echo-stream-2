@@ -40,7 +40,7 @@ export const inactivateEchoStream = (payload: ClientEchoStream["id"]) =>
 //ASYNC
 
 export const asyncAddEchoStream = (hashtag: string): AppThunk => async dispatch => {
-	const res = await fetch(`${process.env.SERVER_URL}/api/echo-stream/start`, {
+	const res = await fetch(`${process.env.SERVER_URL}/api/echo-stream/server`, {
 		method: "POST",
 		credentials: "include",
 		body: JSON.stringify({hashtag}),

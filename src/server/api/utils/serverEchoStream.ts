@@ -3,7 +3,7 @@ export type ServerEchoStream = {
 	hashtag: string;
 	creator: string;
 	active: boolean;
-	createdAt: Date;
+	createdAt: Date | string;
 };
 
 export const serverEchoStream = (
