@@ -1,8 +1,8 @@
 import express from "express";
-import {redisClient} from "../../server";
 import echoStreamRouter from "./echoStream";
 import util from "util";
-import {getEchoStreamServerState} from "../utils/redisActions";
+import {getEchoStreamServerState} from "../utils/serverStoreActions";
+import {store} from "../../server";
 
 const apiRouter = express.Router();
 
@@ -10,7 +10,7 @@ apiRouter.get("/ping", (req, res) => res.json("Pong"));
 
 apiRouter.get("/log-server-state", async (req, res) => {
 	try {
-		const echoStreamServerState = await getEchoStreamServerState(redisClient)();
+		const echoStreamServerState = await getEchoStreamServerState(store)();
 
 		if (echoStreamServerState) {
 			console.log(`Number of active streams: ${echoStreamServerState.length}`);

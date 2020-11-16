@@ -1,8 +1,10 @@
 import {ParamsDictionary, Request, Response} from "express-serve-static-core";
 import QueryString from "qs";
-import {twitterStream} from "../../server";
-import {redisClient} from "../../server";
-import {getEchoStreamServerState, removeEchoStreamFromServerState} from "../utils/redisActions";
+import {store, twitterStream} from "../../server";
+import {
+	getEchoStreamServerState,
+	removeEchoStreamFromServerState,
+} from "../utils/serverStoreActions";
 import {startEchoStream} from "../utils/startEchoStream";
 import {shutDownAndCleanUpAfterEchoStream} from "../utils/util";
 
@@ -13,9 +15,9 @@ const echoStreamStopController = async (
 	try {
 		const echoStreamId = req.body.id as string;
 
-		await removeEchoStreamFromServerState(redisClient)(echoStreamId);
+		await removeEchoStreamFromServerState(store)(echoStreamId);
 
-		const echoStreamServerState = await getEchoStreamServerState(redisClient)();
+		const echoStreamServerState = await getEchoStreamServerState(store)();
 
 		if (echoStreamServerState) {
 			shutDownAndCleanUpAfterEchoStream(twitterStream);

@@ -9,6 +9,8 @@ import redis from "redis";
 import session from "express-session";
 import TwitterStream from "./api/utils/TwitterStream";
 import path from "path";
+import {serverStore} from "./api/utils/server-store/serverStore";
+import {redisServerStore} from "./api/utils/server-store/redis-server-store/redisServerStore";
 
 export const app = express();
 
@@ -20,11 +22,9 @@ if (!process.env.REDIS_URL) {
 	throw new Error("REDIS_URL not found.");
 }
 
-export const redisClient = redis.createClient(process.env.REDIS_URL);
-
 app.use(
 	session({
-		store: new RedisStore({client: redisClient}),
+		store: new RedisStore({client: redis.createClient(process.env.REDIS_URL!)}),
 		secret: process.env.SESSION_STORE_SECRET as string,
 		saveUninitialized: true,
 		resave: false,
@@ -53,7 +53,9 @@ if (process.env.NODE_ENV === "production") {
 	});
 }
 
-redisClient.set("echoStreamServerState", JSON.stringify([]));
+export const store = serverStore(redisServerStore);
+
+store.write("echoStreamServerState", JSON.stringify([]));
 
 app.use("/api", apiRouter);
 
@@ -62,8 +64,16 @@ if (process.env.NODE_ENV === "development") {
 	app.use(errorhandler());
 }
 
+if (process.env.NODE_ENV !== "test") {
+}
+
 const server = app.listen(PORT, () => console.log(`Server now listening at port: ${PORT}`));
 
 export const twitterStream = new TwitterStream();
 
 export const ioServer = io.listen(server);
+
+process.on("uncaughtException", err => {
+	console.log("uncaught exception occurred");
+	console.log(err);
+});

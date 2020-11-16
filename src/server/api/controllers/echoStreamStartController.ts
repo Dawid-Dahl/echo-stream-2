@@ -1,7 +1,6 @@
 import {Request, Response} from "express-serve-static-core";
-import {redisClient} from "../../server";
-import {twitterStream} from "../../server";
-import {addEchoStreamToServerState, getEchoStreamServerState} from "../utils/redisActions";
+import {store, twitterStream} from "../../server";
+import {addEchoStreamToServerState, getEchoStreamServerState} from "../utils/serverStoreActions";
 import {serverEchoStream} from "../utils/serverEchoStream";
 import shutDownStreamAfterTimeout from "../utils/shutDownStreamAfterTimeout";
 import {startEchoStream} from "../utils/startEchoStream";
@@ -13,13 +12,9 @@ const echoStreamStartController = async (req: Request, res: Response) => {
 
 		const id = generateId(12);
 
-		await addEchoStreamToServerState(redisClient, serverEchoStream)(
-			id,
-			hashtag,
-			req.sessionID ?? ""
-		);
+		await addEchoStreamToServerState(store, serverEchoStream)(id, hashtag, req.sessionID ?? "");
 
-		const echoStreamServerState = await getEchoStreamServerState(redisClient)();
+		const echoStreamServerState = await getEchoStreamServerState(store)();
 
 		if (echoStreamServerState) {
 			shutDownAndCleanUpAfterEchoStream(twitterStream);

@@ -4,8 +4,7 @@ import {
 	getEchoStreamServerState,
 	removeAllStreamsFromServerState,
 	removeEchoStreamFromServerState,
-} from "./redisActions";
-import redis from "redis";
+} from "./serverStoreActions";
 import {serverEchoStream, ServerEchoStream} from "./serverEchoStream";
 import {
 	manyStreams,
@@ -15,72 +14,53 @@ import {
 	threeStreamsOneCreatedNowTwoCreatedTwoHoursAgo,
 	threeStreamsOneCreatedNowTwoCreatedTwoMinutesAgo,
 } from "./mock-data/mockData";
+import {ServerStore} from "./server-store/serverStore";
+import {mocked} from "ts-jest/utils";
 
-jest.mock("redis", () => ({
-	createClient: jest.fn(() => ({
-		get: jest.fn((k, callback) => callback(null, manyStreams)),
-		set: jest.fn((k, v, callback) => callback(null, "OK")),
-	})),
+const mockedStoreConstructor = jest.fn<ServerStore, []>(() => ({
+	read: _k => Promise.resolve(manyStreams),
+	write: (_k, _v) => Promise.resolve(true),
 }));
 
-const redisClient = (redis.createClient() as unknown) as jest.Mocked<redis.RedisClient>;
+const mockedStore = mocked(mockedStoreConstructor());
 
-const redisClientGetSpy = jest.spyOn(redisClient, "get");
-const redisClientSetSpy = jest.spyOn(redisClient, "set");
+const mockedStoreReadSpy = jest.spyOn(mockedStore, "read");
+const mockedStoreWriteSpy = jest.spyOn(mockedStore, "write");
 
 afterEach(() => {
-	redisClientGetSpy.mockClear();
-	redisClientSetSpy.mockClear();
+	mockedStoreReadSpy.mockClear();
+	mockedStoreWriteSpy.mockClear();
 });
 
 describe("getEchoStreamServerState", () => {
 	describe("happy path", () => {
 		it("should return the echo stream server state if there are active streams", async () => {
-			await expect(getEchoStreamServerState(redisClient)()).resolves.toEqual(
-				JSON.parse(manyStreams)
-			);
-			expect(redisClientGetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientGetSpy).toHaveBeenCalledWith(
-				"echoStreamServerState",
-				expect.any(Function)
-			);
+			expect(await getEchoStreamServerState(mockedStore)()).toEqual(JSON.parse(manyStreams));
 		});
 		it("should return the echo stream server state if there are no active streams", async () => {
-			redisClient.get.mockImplementationOnce((k, callback) => {
-				callback!(null, noStreams);
-				return true;
-			});
-			await expect(getEchoStreamServerState(redisClient)()).resolves.toEqual([]);
-			expect(redisClientGetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientGetSpy).toHaveBeenCalledWith(
-				"echoStreamServerState",
-				expect.any(Function)
-			);
+			mockedStoreReadSpy.mockImplementationOnce(_k => Promise.resolve(noStreams));
+
+			expect(await getEchoStreamServerState(mockedStore)()).toEqual([]);
 		});
 		it("should resolve to null if Redis returns null", async () => {
-			redisClient.get.mockImplementationOnce((k, callback) => {
-				callback!(null, null);
-				return true;
-			});
-			await expect(getEchoStreamServerState(redisClient)()).resolves.toBe(null);
-			expect(redisClientGetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientGetSpy).toHaveBeenCalledWith(
-				"echoStreamServerState",
-				expect.any(Function)
-			);
+			mockedStoreReadSpy.mockImplementationOnce(_k => Promise.resolve(null));
+			expect(await getEchoStreamServerState(mockedStore)()).toBe(null);
 		});
 	});
 	describe("sad path", () => {
-		it("should throw an error if the redisClient get method throws an error", () => {
-			redisClient.get.mockImplementationOnce((k: any, callback: any) =>
-				callback(new Error(""), manyStreams)
-			);
+		it("should throw an error if the serverStore get method throws an error", async () => {
+			mockedStoreReadSpy.mockImplementationOnce(_k => {
+				throw new Error("error!");
+			});
 
 			const spy = jest.spyOn(console, "error");
 			spy.mockImplementationOnce(() => {});
-			expect(getEchoStreamServerState(redisClient)()).rejects.toThrow(
-				"Couldn't get the stream server state from Redis."
-			);
+
+			try {
+				await getEchoStreamServerState(mockedStore)();
+			} catch (e) {
+				expect(e.message).toMatch("error!");
+			}
 		});
 	});
 });
@@ -132,48 +112,77 @@ describe("addEchoStreamToServerState", () => {
 		it("should add an echo stream to the server state", async () => {
 			jest.spyOn(Date, "now").mockImplementation(() => 1605204000042);
 			expect(
-				await addEchoStreamToServerState(redisClient, serverEchoStream)(
+				await addEchoStreamToServerState(mockedStore, serverEchoStream)(
 					id,
 					hashtag,
 					creator
 				)
 			).toBe(true);
-			expect(redisClientGetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientGetSpy).toHaveBeenCalledWith(
-				"echoStreamServerState",
-				expect.any(Function)
-			);
 
-			expect(redisClientSetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientSetSpy).toHaveBeenCalledWith(
+			expect(mockedStoreWriteSpy).toHaveBeenCalledTimes(1);
+			expect(mockedStoreWriteSpy).toHaveBeenCalledWith(
 				"echoStreamServerState",
-				JSON.stringify([...JSON.parse(manyStreams), ...JSON.parse(oneStream)]),
-				expect.any(Function)
+				JSON.stringify([
+					...JSON.parse(manyStreams),
+					{
+						id,
+						hashtag,
+						creator,
+						active: true,
+						createdAt: new Date(1605204000042),
+					},
+				])
 			);
 		});
 	});
 	describe("sad path", () => {
 		it("should throw an error if the redisClient get method throws an error", async () => {
-			redisClient.get.mockImplementationOnce(() => {
-				throw new Error();
+			mockedStoreReadSpy.mockImplementationOnce(() => {
+				throw new Error("error!");
 			});
 
 			const spy = jest.spyOn(console, "error");
 			spy.mockImplementationOnce(() => {});
-			await expect(
-				addEchoStreamToServerState(redisClient, serverEchoStream)(id, hashtag, creator)
-			).rejects.toThrow("Couldn't start a session. Is Redis server active?");
+
+			try {
+				await addEchoStreamToServerState(mockedStore, serverEchoStream)(
+					id,
+					hashtag,
+					creator
+				);
+			} catch (e) {
+				expect(e.message).toMatch("error!");
+			}
 		});
+
 		it("should throw an error if the redisClient set method throws an error", async () => {
-			redisClient.set.mockImplementationOnce(() => {
-				throw new Error();
+			mockedStoreWriteSpy.mockImplementationOnce(() => {
+				throw new Error("error!");
 			});
 
 			const spy = jest.spyOn(console, "error");
 			spy.mockImplementationOnce(() => {});
-			await expect(
-				addEchoStreamToServerState(redisClient, serverEchoStream)(id, hashtag, creator)
-			).rejects.toThrow("Couldn't start a session. Is Redis server active?");
+
+			try {
+				await addEchoStreamToServerState(mockedStore, serverEchoStream)(
+					id,
+					hashtag,
+					creator
+				);
+			} catch (e) {
+				expect(e.message).toMatch("error!");
+			}
+		});
+		it("should return false if the state returned was null or undefined", async () => {
+			mockedStoreReadSpy.mockImplementationOnce(_k => Promise.resolve(null));
+
+			expect(
+				await addEchoStreamToServerState(mockedStore, serverEchoStream)(
+					id,
+					hashtag,
+					creator
+				)
+			).toBe(false);
 		});
 	});
 });
@@ -181,40 +190,32 @@ describe("addEchoStreamToServerState", () => {
 describe("removeEchoStreamFromServerState", () => {
 	describe("happy path", () => {
 		it("should remove an echo stream from the server state if it has active streams", async () => {
-			const stateWithOnlyCatStream = Array.of(
-				JSON.parse(manyStreams)[1]
-			) as ServerEchoStream[];
-
-			await removeEchoStreamFromServerState(redisClient)("cdc0445266ff5d6db207b4b8");
-
-			expect(redisClientSetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientSetSpy.mock.calls[0][0]).toBe("echoStreamServerState");
-			expect(redisClientSetSpy.mock.calls[0][1]).toBe(JSON.stringify(stateWithOnlyCatStream));
+			await removeEchoStreamFromServerState(mockedStore)("cdc0445266ff5d6db207b4b8");
 		});
 		it("should do nothing to the server state if it has no active streams", async () => {
-			redisClient.get.mockImplementationOnce((k, callback) => {
-				callback!(null, noStreams);
-				return true;
-			});
+			mockedStoreReadSpy.mockImplementationOnce(_k => Promise.resolve(noStreams));
 
-			await removeEchoStreamFromServerState(redisClient)("cdc0445266ff5d6db207b4b8");
-
-			expect(redisClientSetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientSetSpy.mock.calls[0][0]).toBe("echoStreamServerState");
-			expect(redisClientSetSpy.mock.calls[0][1]).toBe(JSON.stringify([]));
+			await removeEchoStreamFromServerState(mockedStore)("cdc0445266ff5d6db207b4b8");
 		});
 	});
 	describe("sad path", () => {
 		it("should throw an error if the redisClient get method throws an error", async () => {
-			redisClient.get.mockImplementationOnce(() => {
+			mockedStoreReadSpy.mockImplementationOnce(() => {
 				throw new Error();
 			});
 
 			const spy = jest.spyOn(console, "error");
 			spy.mockImplementationOnce(() => {});
 			await expect(
-				removeEchoStreamFromServerState(redisClient)("cdc0445266ff5d6db207b4b8")
+				removeEchoStreamFromServerState(mockedStore)("cdc0445266ff5d6db207b4b8")
 			).rejects.toThrow("Couldn't get the stream server state from Redis.");
+		});
+		it("should return false if the state returned was null or undefined", async () => {
+			mockedStoreReadSpy.mockImplementationOnce(_k => Promise.resolve(null));
+
+			expect(
+				await removeEchoStreamFromServerState(mockedStore)("cdc0445266ff5d6db207b4b8")
+			).toBe(false);
 		});
 	});
 });
@@ -225,26 +226,25 @@ describe("removeAllStreamsFromServerState", () => {
 			const spy = jest.spyOn(console, "log");
 			spy.mockImplementationOnce(() => {});
 
-			await removeAllStreamsFromServerState(redisClient)();
-
-			expect(redisClientGetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientGetSpy.mock.calls[0][0]).toBe("echoStreamServerState");
-			expect(redisClientSetSpy).toHaveBeenCalledTimes(1);
-			expect(redisClientSetSpy.mock.calls[0][0]).toBe("echoStreamServerState");
-			expect(redisClientSetSpy.mock.calls[0][1]).toBe(JSON.stringify([]));
+			await removeAllStreamsFromServerState(mockedStore)();
 		});
 	});
 	describe("sad path", () => {
 		it("should throw an error if the redisClient get method throws an error", async () => {
-			redisClient.get.mockImplementationOnce(() => {
+			mockedStoreReadSpy.mockImplementationOnce(() => {
 				throw new Error();
 			});
 
 			const spy = jest.spyOn(console, "error");
 			spy.mockImplementationOnce(() => {});
-			await expect(removeAllStreamsFromServerState(redisClient)()).rejects.toThrow(
+			await expect(removeAllStreamsFromServerState(mockedStore)()).rejects.toThrow(
 				"Couldn't get the stream server state from Redis."
 			);
+		});
+		it("should return false if the state returned was null or undefined", async () => {
+			mockedStoreReadSpy.mockImplementationOnce(_k => Promise.resolve(null));
+
+			expect(await removeAllStreamsFromServerState(mockedStore)()).toBe(false);
 		});
 	});
 });

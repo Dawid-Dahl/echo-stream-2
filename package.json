@@ -9,7 +9,7 @@
     "dev-start-server": "nodemon src/server/server.ts",
     "build": "tsc && parcel build src/client/index.html --out-dir dist/client",
     "dev-build": "parcel build src/client/index.html --out-dir dist/client",
-    "test": "jest --coverage --watchAll"
+    "test": "jest --coverage --watchAll --setupFiles dotenv/config"
   },
   "author": "Dawid Dahl",
   "license": "ISC",

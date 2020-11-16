@@ -5,6 +5,5 @@ export const generateId = (length: number) => crypto.randomBytes(length).toStrin
 
 export const shutDownAndCleanUpAfterEchoStream = (twitterStream: TwitterStream) => {
 	twitterStream.stopTwitterStream();
-
 	twitterStream.removeAllListeners();
 };

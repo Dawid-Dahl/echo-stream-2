@@ -1,10 +1,10 @@
 import express from "express";
-import {redisClient} from "../../server";
+import {store} from "../../server";
 import echoStreamGetAllController from "../controllers/echoStreamGetAllController";
 import echoStreamGetController from "../controllers/echoStreamGetController";
 import echoStreamStartController from "../controllers/echoStreamStartController";
 import echoStreamStopController from "../controllers/echoStreamStopController";
-import {removeAllStreamsFromServerState} from "../utils/redisActions";
+import {removeAllStreamsFromServerState} from "../utils/serverStoreActions";
 
 const echoStreamRouter = express.Router();
 
@@ -17,7 +17,7 @@ echoStreamRouter.post("/start", echoStreamStartController);
 echoStreamRouter.delete("/stop", echoStreamStopController);
 
 echoStreamRouter.delete("/clear-server-state", (req, res) => {
-	removeAllStreamsFromServerState(redisClient)();
+	removeAllStreamsFromServerState(store)();
 
 	res.status(200).send("Server state cleared.");
 });

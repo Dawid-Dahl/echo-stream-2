@@ -27,9 +27,13 @@ class TwitterStream extends EventEmitter {
 	}
 
 	stopTwitterStream() {
-		console.log("Stopping the Twit Stream");
+		if (!this.twitStream) {
+			throw new Error("No twitter stream is active!");
+		} else {
+			console.log("Stopping the Twit Stream");
 
-		this.twitStream?.stop();
+			this.twitStream.stop();
+		}
 	}
 }
 

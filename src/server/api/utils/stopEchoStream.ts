@@ -1,38 +1,31 @@
-/* import {RedisClient} from "redis";
 import {twitterStream} from "../../server";
-import {getEchoStreamServerState, removeEchoStreamFromServerState} from "./redisActions";
+import {getEchoStreamServerState, removeEchoStreamFromServerState} from "./serverStoreActions";
 import {ServerEchoStream} from "./serverEchoStream";
 import {startEchoStream} from "./startEchoStream";
 import {shutDownAndCleanUpAfterEchoStream} from "./util";
+import {ServerStore} from "./server-store/serverStore";
 
-const stopEchoStream = (redisClient: RedisClient) => async (
+const stopEchoStream = (store: ServerStore) => async (
 	echoStreamId: ServerEchoStream["id"]
 ): Promise<ServerEchoStream[] | null> => {
 	try {
-		await removeEchoStreamFromServerState(redisClient)(echoStreamId);
+		await removeEchoStreamFromServerState(store)(echoStreamId);
 
-		const echoStreamServerState = await getEchoStreamServerState(redisClient)();
+		const echoStreamServerState = await getEchoStreamServerState(store)();
 
 		if (echoStreamServerState) {
 			shutDownAndCleanUpAfterEchoStream(twitterStream);
 
-			if (echoStreamServerState.length === 0) {
-				return res.status(200).json(JSON.stringify(echoStreamServerState));
-			}
+			await startEchoStream(echoStreamServerState);
 
-			const clientState = await startEchoStream(echoStreamServerState);
-
-			if (clientState) {
-				res.status(200).json(JSON.stringify(clientState));
-			} else {
-				res.status(500).json({message: "Couldn't start the Echo Stream"});
-			}
+			return echoStreamServerState;
 		} else {
-			res.status(500).json({message: "Couldn't start the Echo Stream"});
+			return null;
 		}
 	} catch (e) {
 		console.error(e);
+		throw new Error("Couldn't start the Echo Stream");
 	}
 };
 
-export default stopEchoStream; */
+export default stopEchoStream;

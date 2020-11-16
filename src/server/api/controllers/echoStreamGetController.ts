@@ -1,13 +1,13 @@
 import {Request, Response} from "express-serve-static-core";
-import {redisClient} from "../../server";
+import {store} from "../../server";
 import {clientEchoStream} from "../utils/clientEchoStream";
-import {getEchoStreamServerState} from "../utils/redisActions";
+import {getEchoStreamServerState} from "../utils/serverStoreActions";
 
 const echoStreamGetController = async (req: Request, res: Response) => {
 	try {
 		const echoStreamId = req.query.id as string;
 
-		const echoStreamServerState = await getEchoStreamServerState(redisClient)();
+		const echoStreamServerState = await getEchoStreamServerState(store)();
 
 		if (echoStreamServerState) {
 			const foundEchoStream = echoStreamServerState.find(

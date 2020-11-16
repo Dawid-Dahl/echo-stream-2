@@ -1,6 +1,6 @@
 import crypto from "crypto";
-/* import shutDownStreamAfterTimeout from "./shutDownStreamAfterTimeout"; */
-import {generateId} from "./util";
+import TwitterStream from "./TwitterStream";
+import {generateId, shutDownAndCleanUpAfterEchoStream} from "./util";
 
 describe("generateId", () => {
 	it("should generate an id", () => {
@@ -12,25 +12,27 @@ describe("generateId", () => {
 	});
 });
 
-//FINISH THIS
-/* describe("shutDownStreamAfterTimeout", () => {
+describe("shutDownAndCleanUpAfterEchoStream", () => {
+	const twitterStream = new TwitterStream();
+
 	describe("happy path", () => {
-		it("should shut down a stream after ten seconds", () => {
-			const tenSeconds = 1000 * 15;
-			expect(shutDownStreamAfterTimeout(tenSeconds, streamId)).resolves.toBe(true);
+		it("should stop the twitter stream, then remove all listeners", () => {
+			const twitterStreamStopSpy = jest
+				.spyOn(twitterStream, "stopTwitterStream")
+				.mockImplementation(() => {});
+
+			shutDownAndCleanUpAfterEchoStream(twitterStream);
+
+			expect(twitterStreamStopSpy).toHaveBeenCalledTimes(1);
+		});
+		it("should remove all listeners", () => {
+			const twitterStreamRemoveAllListenersSpy = jest
+				.spyOn(twitterStream, "removeAllListeners")
+				.mockImplementation(() => expect.any(TwitterStream));
+
+			shutDownAndCleanUpAfterEchoStream(twitterStream);
+
+			expect(twitterStreamRemoveAllListenersSpy).toHaveBeenCalledTimes(1);
 		});
 	});
-	describe("sad path", () => {
-		it("", () => {});
-	});
-}); */
-
-//FINISH THIS
-/* describe("stopEchoStream", () => {
-	describe("happy path", () => {
-		it("should stop an echo stream", () => {});
-	});
-	describe("sad path", () => {
-		it("", () => {});
-	});
-}); */
+});
