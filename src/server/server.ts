@@ -4,12 +4,17 @@ import "dotenv/config";
 import cors from "cors";
 import errorhandler from "errorhandler";
 import morgan from "morgan";
-import redis from "redis";
 import session from "express-session";
 import path from "path";
 import {ServerStore} from "./api/utils/server-store/serverStore";
+import TwitterStream from "./api/utils/TwitterStream";
+import {RedisClient} from "redis";
 
-export const server = (store: ServerStore) => {
+export const server = (
+	store: ServerStore,
+	twitterStream: TwitterStream,
+	redisClient: RedisClient
+) => {
 	const app = express();
 
 	const RedisStore = require("connect-redis")(session);
@@ -20,7 +25,7 @@ export const server = (store: ServerStore) => {
 
 	app.use(
 		session({
-			store: new RedisStore({client: redis.createClient(process.env.REDIS_URL!)}),
+			store: new RedisStore({client: redisClient}),
 			secret: process.env.SESSION_STORE_SECRET as string,
 			saveUninitialized: true,
 			resave: false,
