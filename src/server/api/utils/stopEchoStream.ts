@@ -1,4 +1,4 @@
-import {twitterStream} from "../../server";
+import {twitterStream} from "../../main";
 import {getEchoStreamServerState, removeEchoStreamFromServerState} from "./serverStoreActions";
 import {ServerEchoStream} from "./serverEchoStream";
 import {startEchoStream} from "./startEchoStream";

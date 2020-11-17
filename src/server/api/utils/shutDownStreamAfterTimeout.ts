@@ -1,4 +1,4 @@
-import {store} from "../../server";
+import {store} from "../../main";
 import {ServerEchoStream} from "./serverEchoStream";
 import {removeEchoStreamFromServerState} from "./serverStoreActions";
 import stopEchoStream from "./stopEchoStream";

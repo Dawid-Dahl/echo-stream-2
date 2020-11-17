@@ -4,76 +4,67 @@ import "dotenv/config";
 import cors from "cors";
 import errorhandler from "errorhandler";
 import morgan from "morgan";
-import io from "socket.io";
 import redis from "redis";
 import session from "express-session";
-import TwitterStream from "./api/utils/TwitterStream";
 import path from "path";
-import {serverStore} from "./api/utils/server-store/serverStore";
-import {redisServerStore} from "./api/utils/server-store/redis-server-store/redisServerStore";
+import {ServerStore} from "./api/utils/server-store/serverStore";
 
-export const app = express();
+export const server = (store: ServerStore) => {
+	const app = express();
 
-const PORT = process.env.PORT || 5000;
+	const RedisStore = require("connect-redis")(session);
 
-const RedisStore = require("connect-redis")(session);
-
-if (!process.env.REDIS_URL) {
-	throw new Error("REDIS_URL not found.");
-}
-
-app.use(
-	session({
-		store: new RedisStore({client: redis.createClient(process.env.REDIS_URL!)}),
-		secret: process.env.SESSION_STORE_SECRET as string,
-		saveUninitialized: true,
-		resave: false,
-	})
-);
-
-app.use(function (req, res, next) {
-	if (!req.session) {
-		return next(new Error("Couldn't start a session. Is Redis server active?"));
+	if (!process.env.REDIS_URL) {
+		throw new Error("REDIS_URL not found.");
 	}
-	next();
-});
-app.use(express.json());
-app.use(
-	cors({
-		origin: process.env.CLIENT_URL,
-		credentials: true,
-	})
-);
 
-if (process.env.NODE_ENV === "production") {
-	app.use(express.static(path.join(__dirname, "..", "client")));
+	app.use(
+		session({
+			store: new RedisStore({client: redis.createClient(process.env.REDIS_URL!)}),
+			secret: process.env.SESSION_STORE_SECRET as string,
+			saveUninitialized: true,
+			resave: false,
+		})
+	);
 
-	app.get(/^\/(?!api).*/, (req, res) => {
-		res.sendFile(path.join(__dirname, "..", "client", "index.html"));
+	app.use(function (req, res, next) {
+		if (!req.session) {
+			return next(new Error("Couldn't start a session. Is Redis server active?"));
+		}
+		next();
 	});
-}
+	app.use(express.json());
+	app.use(
+		cors({
+			origin: process.env.CLIENT_URL,
+			credentials: true,
+		})
+	);
 
-export const store = serverStore(redisServerStore);
+	if (process.env.NODE_ENV === "production") {
+		app.use(express.static(path.join(__dirname, "..", "client")));
 
-store.write("echoStreamServerState", JSON.stringify([]));
+		app.get(/^\/(?!api).*/, (req, res) => {
+			res.sendFile(path.join(__dirname, "..", "client", "index.html"));
+		});
+	}
 
-app.use("/api", apiRouter);
+	store.write("echoStreamServerState", JSON.stringify([]));
 
-if (process.env.NODE_ENV === "development") {
-	app.use(morgan("dev"));
-	app.use(errorhandler());
-}
+	app.use("/api", apiRouter);
 
-if (process.env.NODE_ENV !== "test") {
-}
+	if (process.env.NODE_ENV === "development") {
+		app.use(morgan("dev"));
+		app.use(errorhandler());
+	}
 
-const server = app.listen(PORT, () => console.log(`Server now listening at port: ${PORT}`));
+	if (process.env.NODE_ENV !== "test") {
+	}
 
-export const twitterStream = new TwitterStream();
+	process.on("uncaughtException", err => {
+		console.log("uncaught exception occurred");
+		console.log(err);
+	});
 
-export const ioServer = io.listen(server);
-
-process.on("uncaughtException", err => {
-	console.log("uncaught exception occurred");
-	console.log(err);
-});
+	return app;
+};

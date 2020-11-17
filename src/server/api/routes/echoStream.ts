@@ -1,5 +1,5 @@
 import express from "express";
-import {store} from "../../server";
+import {store} from "../../main";
 import echoStreamGetAllController from "../controllers/echoStreamGetAllController";
 import echoStreamGetController from "../controllers/echoStreamGetController";
 import echoStreamStartController from "../controllers/echoStreamStartController";

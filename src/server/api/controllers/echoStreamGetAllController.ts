@@ -1,5 +1,5 @@
 import {Request, Response} from "express-serve-static-core";
-import {store} from "../../server";
+import {store} from "../../main";
 import {clientEchoStream} from "../utils/clientEchoStream";
 import {getEchoStreamServerState} from "../utils/serverStoreActions";
 

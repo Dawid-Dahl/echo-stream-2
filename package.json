@@ -2,11 +2,11 @@
   "name": "echo-stream-2",
   "version": "1.0.0",
   "description": "",
-  "main": "server.ts",
+  "main": "main.ts",
   "scripts": {
     "start": "node dist/server/server.js",
     "dev-start-client": "parcel src/client/index.html",
-    "dev-start-server": "nodemon src/server/server.ts",
+    "dev-start-server": "nodemon src/server/main.ts",
     "build": "tsc && parcel build src/client/index.html --out-dir dist/client",
     "dev-build": "parcel build src/client/index.html --out-dir dist/client",
     "test": "jest --coverage --watchAll --setupFiles dotenv/config"

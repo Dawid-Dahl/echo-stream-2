@@ -1,4 +1,4 @@
-import {twitterStream} from "../../server";
+import {twitterStream} from "../../main";
 import {ServerEchoStream} from "./serverEchoStream";
 import {initIoNameSpaceAndStartEmitting} from "./initIoNameSpaceAndStartEmitting";
 import {clientEchoStream, ClientEchoStream} from "./clientEchoStream";

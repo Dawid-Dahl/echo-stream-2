@@ -1,4 +1,4 @@
-import {ioServer, twitterStream} from "../../server";
+import {ioServer, twitterStream} from "../../main";
 import {ServerEchoStream} from "./serverEchoStream";
 
 export const initIoNameSpaceAndStartEmitting = ({id, hashtag}: ServerEchoStream) => {

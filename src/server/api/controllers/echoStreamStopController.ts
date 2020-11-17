@@ -1,6 +1,6 @@
 import {ParamsDictionary, Request, Response} from "express-serve-static-core";
 import QueryString from "qs";
-import {store, twitterStream} from "../../server";
+import {store, twitterStream} from "../../main";
 import {
 	getEchoStreamServerState,
 	removeEchoStreamFromServerState,

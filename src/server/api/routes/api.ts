@@ -2,7 +2,7 @@ import express from "express";
 import echoStreamRouter from "./echoStream";
 import util from "util";
 import {getEchoStreamServerState} from "../utils/serverStoreActions";
-import {store} from "../../server";
+import {store} from "../../main";
 
 const apiRouter = express.Router();
 

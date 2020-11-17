@@ -1,10 +1,10 @@
 import {Request, Response} from "express-serve-static-core";
-import {store, twitterStream} from "../../server";
 import {addEchoStreamToServerState, getEchoStreamServerState} from "../utils/serverStoreActions";
 import {serverEchoStream} from "../utils/serverEchoStream";
 import shutDownStreamAfterTimeout from "../utils/shutDownStreamAfterTimeout";
 import {startEchoStream} from "../utils/startEchoStream";
 import {generateId, shutDownAndCleanUpAfterEchoStream} from "../utils/util";
+import {store, twitterStream} from "../../main";
 
 const echoStreamStartController = async (req: Request, res: Response) => {
 	try {
