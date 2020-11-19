@@ -63,7 +63,7 @@ export const server = (effectContainer: EffectContainer) => {
 	}
 
 	process.on("uncaughtException", err => {
-		console.log("uncaught exception occurred");
+		console.log("Uncaught exception occurred");
 		console.log(err);
 	});
 

@@ -14,6 +14,7 @@ import {
 } from "./effect-utils/server-store/serverStoreUtils";
 import {initIoNameSpaceAndStartEmitting} from "./effect-utils/socket-io/initIoNameSpaceAndStartEmitting";
 import TwitterStream from "./effect-utils/twitter-stream/TwitterStream";
+import {ioServer} from "./main";
 
 export const store = serverStore(redisServerStore);
 
@@ -28,6 +29,7 @@ const redisClient = redis.createClient(process.env.REDIS_URL);
 export type EffectContainer = {
 	store: ServerStore;
 	twitterStream: TwitterStream;
+	ioServer: SocketIO.Server;
 	redisClient: RedisClient;
 	effectUtils: typeof effectUtils;
 };
@@ -49,6 +51,6 @@ const effectUtils = {
 	},
 };
 
-const effectContainer: EffectContainer = {store, twitterStream, redisClient, effectUtils};
+const effectContainer: EffectContainer = {store, twitterStream, ioServer, redisClient, effectUtils};
 
 export default effectContainer;

@@ -1,24 +1,29 @@
 import {EffectContainer} from "../../effectContainer";
-import {ioServer} from "../../main";
 import {ServerEchoStream} from "../../pure-utils/serverEchoStream";
 
-export const initIoNameSpaceAndStartEmitting = ({twitterStream}: EffectContainer) => ({
+export const initIoNameSpaceAndStartEmitting = (effectContainer: EffectContainer) => ({
 	id,
 	hashtag,
 }: ServerEchoStream) => {
-	const hashtagNameSpace = ioServer.of(`/${id}/${hashtag}`).on("connection", socket => {
-		console.log(`Client connected to ${hashtag} namespace.`);
-	});
+	try {
+		const {twitterStream, ioServer} = effectContainer;
 
-	twitterStream.on("tweet", tweet => {
-		const text = tweet.extended_tweet
-			? tweet.extended_tweet.full_text
-			: tweet.full_text
-			? tweet.full_text
-			: tweet.text;
+		const hashtagNameSpace = ioServer.of(`/${id}/${hashtag}`).on("connection", socket => {
+			console.log(`Client connected to ${hashtag} namespace.`);
+		});
 
-		if (text.toLowerCase().includes(hashtag)) {
-			hashtagNameSpace.emit("io-message", {tweet});
-		}
-	});
+		twitterStream.on("tweet", tweet => {
+			const text = tweet.extended_tweet
+				? tweet.extended_tweet.full_text
+				: tweet.full_text
+				? tweet.full_text
+				: tweet.text;
+
+			if (text.toLowerCase().includes(hashtag)) {
+				hashtagNameSpace.emit("io-message", {tweet});
+			}
+		});
+	} catch (e) {
+		console.log(e);
+	}
 };
