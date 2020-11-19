@@ -1,14 +1,17 @@
-import {twitterStream} from "../../main";
 import {getEchoStreamServerState, removeEchoStreamFromServerState} from "./serverStoreActions";
 import {ServerEchoStream} from "./serverEchoStream";
 import {startEchoStream} from "./startEchoStream";
 import {shutDownAndCleanUpAfterEchoStream} from "./util";
 import {ServerStore} from "./server-store/serverStore";
+import TwitterStream from "./TwitterStream";
+import {EffectContainer} from "../../effectContainer";
 
-const stopEchoStream = (store: ServerStore) => async (
+const stopEchoStream = (effectContainer: EffectContainer) => async (
 	echoStreamId: ServerEchoStream["id"]
 ): Promise<ServerEchoStream[] | null> => {
 	try {
+		const {store, twitterStream} = effectContainer;
+
 		await removeEchoStreamFromServerState(store)(echoStreamId);
 
 		const echoStreamServerState = await getEchoStreamServerState(store)();
@@ -16,7 +19,7 @@ const stopEchoStream = (store: ServerStore) => async (
 		if (echoStreamServerState) {
 			shutDownAndCleanUpAfterEchoStream(twitterStream);
 
-			await startEchoStream(echoStreamServerState);
+			await startEchoStream(effectContainer)(echoStreamServerState);
 
 			return echoStreamServerState;
 		} else {

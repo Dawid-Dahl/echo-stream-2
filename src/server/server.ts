@@ -6,15 +6,11 @@ import errorhandler from "errorhandler";
 import morgan from "morgan";
 import session from "express-session";
 import path from "path";
-import {ServerStore} from "./api/utils/server-store/serverStore";
-import TwitterStream from "./api/utils/TwitterStream";
-import {RedisClient} from "redis";
+import {EffectContainer} from "./effectContainer";
 
-export const server = (
-	store: ServerStore,
-	twitterStream: TwitterStream,
-	redisClient: RedisClient
-) => {
+export const server = (effectContainer: EffectContainer) => {
+	const {store, redisClient} = effectContainer;
+
 	const app = express();
 
 	const RedisStore = require("connect-redis")(session);
@@ -56,7 +52,7 @@ export const server = (
 
 	store.write("echoStreamServerState", JSON.stringify([]));
 
-	app.use("/api", apiRouter);
+	app.use("/api", apiRouter(effectContainer));
 
 	if (process.env.NODE_ENV === "development") {
 		app.use(morgan("dev"));

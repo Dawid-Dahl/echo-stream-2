@@ -1,16 +1,18 @@
-import {twitterStream} from "../../main";
 import {ServerEchoStream} from "./serverEchoStream";
 import {initIoNameSpaceAndStartEmitting} from "./initIoNameSpaceAndStartEmitting";
 import {clientEchoStream, ClientEchoStream} from "./clientEchoStream";
+import {EffectContainer} from "../../effectContainer";
 
-export const startEchoStream = async (
+export const startEchoStream = (effectContainer: EffectContainer) => async (
 	echoStreamServerState: ServerEchoStream[]
 ): Promise<ClientEchoStream[] | null> => {
 	try {
+		const {twitterStream} = effectContainer;
+
 		twitterStream.startTwitterStream(echoStreamServerState.map(state => state.hashtag));
 
 		echoStreamServerState.forEach(echoStreamState => {
-			initIoNameSpaceAndStartEmitting(echoStreamState);
+			initIoNameSpaceAndStartEmitting(effectContainer)(echoStreamState);
 		});
 
 		const echoStreamClientState = echoStreamServerState.map(({id, hashtag, creator, active}) =>

@@ -1,6 +1,6 @@
 import {ParamsDictionary, Request, Response} from "express-serve-static-core";
 import QueryString from "qs";
-import {store, twitterStream} from "../../main";
+import {EffectContainer} from "../../effectContainer";
 import {
 	getEchoStreamServerState,
 	removeEchoStreamFromServerState,
@@ -8,11 +8,13 @@ import {
 import {startEchoStream} from "../utils/startEchoStream";
 import {shutDownAndCleanUpAfterEchoStream} from "../utils/util";
 
-const echoStreamStopController = async (
+const echoStreamStopController = (effectContainer: EffectContainer) => async (
 	req: Request<ParamsDictionary, any, any, QueryString.ParsedQs>,
 	res: Response<any, number>
 ) => {
 	try {
+		const {store, twitterStream} = effectContainer;
+
 		const echoStreamId = req.body.id as string;
 
 		await removeEchoStreamFromServerState(store)(echoStreamId);
@@ -26,7 +28,7 @@ const echoStreamStopController = async (
 				return res.status(200).json(JSON.stringify(echoStreamServerState));
 			}
 
-			const clientState = await startEchoStream(echoStreamServerState);
+			const clientState = await startEchoStream(effectContainer)(echoStreamServerState);
 
 			if (clientState) {
 				res.status(200).json(JSON.stringify(clientState));
