@@ -226,7 +226,7 @@ describe("removeAllStreamsFromServerState", () => {
 			const spy = jest.spyOn(console, "log");
 			spy.mockImplementationOnce(() => {});
 
-			await removeAllStreamsFromServerState(mockedStore)();
+			expect(await removeAllStreamsFromServerState(mockedStore)()).toBe(true);
 		});
 	});
 	describe("sad path", () => {

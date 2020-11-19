@@ -1,10 +1,10 @@
-import {RedisClient} from "redis";
 import redis from "redis";
+import {RedisClient} from "redis";
 import {ServerStore} from "../serverStore";
 import {config} from "dotenv";
 
 config({
-	path: ".env",
+	path: "../../../../../.env",
 });
 
 export const redisReaderUnconfig = (redisClient: RedisClient) => (

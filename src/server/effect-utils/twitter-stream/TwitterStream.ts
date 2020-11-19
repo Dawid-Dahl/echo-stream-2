@@ -40,6 +40,8 @@ class TwitterStream extends EventEmitter {
 		if (this.twitStream) {
 			this.stopTwitterStream();
 			this.removeAllListeners();
+		} else {
+			console.log("Twitter stream is not active, no need to shut down anything.");
 		}
 	};
 }

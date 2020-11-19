@@ -1,5 +1,7 @@
 import TwitterStream from "./TwitterStream";
 import T from "../../config/twitConfig";
+import {Stream} from "twit";
+import {start} from "repl";
 
 jest.mock("twit");
 
@@ -13,6 +15,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	twitterStream.twitStream = null;
+	jest.restoreAllMocks();
 });
 
 describe("TwitterStream", () => {
@@ -25,7 +28,7 @@ describe("TwitterStream", () => {
 	describe("startTwitterStream", () => {
 		describe("happy path", () => {
 			it("should start a Twitter stream", () => {
-				jest.spyOn(console, "log").mockImplementationOnce(jest.fn);
+				const consoleSpy = jest.spyOn(console, "log").mockImplementationOnce(jest.fn());
 
 				const tStreamSpy = jest.spyOn(T, "stream");
 
@@ -60,30 +63,48 @@ describe("TwitterStream", () => {
 			);
 		});
 	});
-});
+	describe("shutDownAndCleanUpAfterEchoStream", () => {
+		describe("happy path", () => {
+			beforeEach(() => {
+				(twitterStream.twitStream as any) = {
+					start() {},
+					stop() {},
+				};
+			});
 
-//TODO - Moved from utils into class
-/* describe("shutDownAndCleanUpAfterEchoStream", () => {
-	const twitterStream = new TwitterStream();
+			it("should stop the twitter stream, then remove all listeners", () => {
+				const twitterStreamStopSpy = jest
+					.spyOn(twitterStream, "stopTwitterStream")
+					.mockImplementation(() => {});
 
-	describe("happy path", () => {
-		it("should stop the twitter stream, then remove all listeners", () => {
-			const twitterStreamStopSpy = jest
-				.spyOn(twitterStream, "stopTwitterStream")
-				.mockImplementation(() => {});
+				twitterStream.shutDownAndCleanUpAfterEchoStream();
 
-			shutDownAndCleanUpAfterEchoStream(twitterStream);
+				expect(twitterStreamStopSpy).toHaveBeenCalledTimes(1);
+			});
+			it("should remove all listeners", () => {
+				const twitterStreamRemoveAllListenersSpy = jest
+					.spyOn(twitterStream, "removeAllListeners")
+					.mockImplementation(() => expect.any(TwitterStream));
+				jest.spyOn(console, "log").mockImplementation(() => jest.fn());
 
-			expect(twitterStreamStopSpy).toHaveBeenCalledTimes(1);
+				twitterStream.shutDownAndCleanUpAfterEchoStream();
+
+				expect(twitterStreamRemoveAllListenersSpy).toHaveBeenCalledTimes(1);
+			});
 		});
-		it("should remove all listeners", () => {
-			const twitterStreamRemoveAllListenersSpy = jest
-				.spyOn(twitterStream, "removeAllListeners")
-				.mockImplementation(() => expect.any(TwitterStream));
+		describe("sad path", () => {
+			it("should log a message to the console if no stream is active", () => {
+				const consoleSpy = jest
+					.spyOn(console, "log")
+					.mockImplementationOnce(() => jest.fn());
 
-			shutDownAndCleanUpAfterEchoStream(twitterStream);
+				twitterStream.shutDownAndCleanUpAfterEchoStream();
 
-			expect(twitterStreamRemoveAllListenersSpy).toHaveBeenCalledTimes(1);
+				expect(consoleSpy).toHaveBeenCalledTimes(1);
+				expect(consoleSpy).toHaveBeenCalledWith(
+					"Twitter stream is not active, no need to shut down anything."
+				);
+			});
 		});
 	});
-}); */
+});

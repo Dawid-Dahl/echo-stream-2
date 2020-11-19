@@ -1,6 +1,7 @@
 import redis from "redis";
+import {mocked} from "ts-jest/utils";
 import {manyStreams, noStreams, oneStream} from "../../mock-data/mockData";
-import {redisReaderUnconfig, redisWriterUnconfig} from "./redisServerStore";
+import {redisReaderUnconfig, redisWriterUnconfig, redisServerStore} from "./redisServerStore";
 
 jest.mock("redis", () => ({
 	createClient: jest.fn(() => ({
@@ -9,7 +10,7 @@ jest.mock("redis", () => ({
 	})),
 }));
 
-const mockedRedisClient = (redis.createClient() as unknown) as jest.Mocked<redis.RedisClient>;
+const mockedRedisClient = redis.createClient() as jest.Mocked<redis.RedisClient>;
 
 const redisClientGetSpy = jest.spyOn(mockedRedisClient, "get");
 const redisClientSetSpy = jest.spyOn(mockedRedisClient, "set");
@@ -24,8 +25,11 @@ describe("redisServerStore", () => {
 
 	describe("happy path", () => {
 		it("should call redis.createClient for every exported member, with the right dependency injected", () => {
-			const timesPlusMockedRedusClientCall = 3;
-			expect(redisCreateClientSpy).toHaveBeenCalledTimes(timesPlusMockedRedusClientCall);
+			redisServerStore;
+
+			const twoPlusOneInTestFile = 3;
+
+			expect(redisCreateClientSpy).toHaveBeenCalledTimes(twoPlusOneInTestFile);
 			expect(redisCreateClientSpy).toHaveBeenCalledWith(process.env.REDIS_URL);
 		});
 	});

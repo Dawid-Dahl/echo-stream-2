@@ -1,3 +1,6 @@
+import crypto from "crypto";
+import {generateId} from "./pureUtils";
+
 describe("generateId", () => {
 	it("should generate an id", () => {
 		const spy = jest.spyOn(crypto, "randomBytes");
