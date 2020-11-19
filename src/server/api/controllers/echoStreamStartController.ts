@@ -1,17 +1,16 @@
 import {Request, Response} from "express-serve-static-core";
-import {addEchoStreamToServerState, getEchoStreamServerState} from "../utils/serverStoreActions";
-import {serverEchoStream} from "../utils/serverEchoStream";
-import shutDownStreamAfterTimeout from "../utils/shutDownStreamAfterTimeout";
-import {startEchoStream} from "../utils/startEchoStream";
-import {generateId, shutDownAndCleanUpAfterEchoStream} from "../utils/util";
 import {EffectContainer} from "../../effectContainer";
+import {generateId} from "../../pure-utils/pureUtils";
+import {serverEchoStream} from "../../pure-utils/serverEchoStream";
 
 const echoStreamStartController = (effectContainer: EffectContainer) => async (
 	req: Request,
 	res: Response
 ) => {
 	try {
-		const {store, twitterStream} = effectContainer;
+		const {store, twitterStream, effectUtils} = effectContainer;
+		const {getEchoStreamServerState, addEchoStreamToServerState} = effectUtils.storeUtils;
+		const {startEchoStream, shutDownStreamAfterTimeout} = effectUtils.echoStreamUtils;
 
 		const hashtag = req.body.hashtag as string;
 
@@ -22,11 +21,11 @@ const echoStreamStartController = (effectContainer: EffectContainer) => async (
 		const echoStreamServerState = await getEchoStreamServerState(store)();
 
 		if (echoStreamServerState) {
-			shutDownAndCleanUpAfterEchoStream(twitterStream);
+			twitterStream.shutDownAndCleanUpAfterEchoStream();
 
 			const clientState = await startEchoStream(effectContainer)(echoStreamServerState);
 
-			shutDownStreamAfterTimeout(effectContainer)(1000 * 10, id);
+			shutDownStreamAfterTimeout(effectContainer)(1000 * 1000, id);
 
 			if (clientState) {
 				res.status(200).json(JSON.stringify(clientState));

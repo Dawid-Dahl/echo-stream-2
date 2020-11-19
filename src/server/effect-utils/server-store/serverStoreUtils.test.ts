@@ -4,8 +4,8 @@ import {
 	getEchoStreamServerState,
 	removeAllStreamsFromServerState,
 	removeEchoStreamFromServerState,
-} from "./serverStoreActions";
-import {serverEchoStream, ServerEchoStream} from "./serverEchoStream";
+} from "./serverStoreUtils";
+import {serverEchoStream, ServerEchoStream} from "../../pure-utils/serverEchoStream";
 import {
 	manyStreams,
 	noStreams,
@@ -13,8 +13,8 @@ import {
 	threeStreamsOneCreatedNowTwoCreatedTwoDaysAgo,
 	threeStreamsOneCreatedNowTwoCreatedTwoHoursAgo,
 	threeStreamsOneCreatedNowTwoCreatedTwoMinutesAgo,
-} from "./mock-data/mockData";
-import {ServerStore} from "./server-store/serverStore";
+} from "../mock-data/mockData";
+import {ServerStore} from "./serverStore";
 import {mocked} from "ts-jest/utils";
 
 const mockedStoreConstructor = jest.fn<ServerStore, []>(() => ({

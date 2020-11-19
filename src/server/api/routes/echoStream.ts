@@ -4,18 +4,20 @@ import echoStreamGetAllController from "../controllers/echoStreamGetAllControlle
 import echoStreamGetController from "../controllers/echoStreamGetController";
 import echoStreamStartController from "../controllers/echoStreamStartController";
 import echoStreamStopController from "../controllers/echoStreamStopController";
-import {removeAllStreamsFromServerState} from "../utils/serverStoreActions";
 
 const echoStreamRouter = (effectContainer: EffectContainer) => {
+	const {effectUtils} = effectContainer;
+	const {removeAllStreamsFromServerState} = effectUtils.storeUtils;
+
 	const router = express.Router();
 
-	router.get("/get", echoStreamGetController);
+	router.get("/get", echoStreamGetController(effectContainer));
 
-	router.get("/get-all", echoStreamGetAllController);
+	router.get("/get-all", echoStreamGetAllController(effectContainer));
 
 	router.post("/start", echoStreamStartController(effectContainer));
 
-	router.delete("/stop", echoStreamStopController);
+	router.delete("/stop", echoStreamStopController(effectContainer));
 
 	router.delete("/clear-server-state", (req, res) => {
 		removeAllStreamsFromServerState(effectContainer.store)();

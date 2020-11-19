@@ -35,6 +35,13 @@ class TwitterStream extends EventEmitter {
 			this.twitStream.stop();
 		}
 	}
+
+	shutDownAndCleanUpAfterEchoStream = () => {
+		if (this.twitStream) {
+			this.stopTwitterStream();
+			this.removeAllListeners();
+		}
+	};
 }
 
 export default TwitterStream;

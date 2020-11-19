@@ -1,4 +1,4 @@
-import {ServerEchoStream} from "../serverEchoStream";
+import {ServerEchoStream} from "../../pure-utils/serverEchoStream";
 
 export const oneStream = JSON.stringify([
 	{

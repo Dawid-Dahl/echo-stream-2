@@ -1,5 +1,5 @@
-import {ServerEchoStream} from "./serverEchoStream";
-import {ServerStore} from "./server-store/serverStore";
+import {ServerEchoStream} from "../../pure-utils/serverEchoStream";
+import {ServerStore} from "./serverStore";
 
 export const getEchoStreamServerState = (store: ServerStore) => async () => {
 	try {

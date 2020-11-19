@@ -1,13 +1,15 @@
 import {Request, Response} from "express-serve-static-core";
 import {EffectContainer} from "../../effectContainer";
-import {clientEchoStream} from "../utils/clientEchoStream";
-import {getEchoStreamServerState} from "../utils/serverStoreActions";
+import {clientEchoStream} from "../../pure-utils/clientEchoStream";
 
-const echoStreamGetController = ({store}: EffectContainer) => async (
+const echoStreamGetController = (effectContainer: EffectContainer) => async (
 	req: Request,
 	res: Response
 ) => {
 	try {
+		const {store, effectUtils} = effectContainer;
+		const {getEchoStreamServerState} = effectUtils.storeUtils;
+
 		const echoStreamId = req.query.id as string;
 
 		const echoStreamServerState = await getEchoStreamServerState(store)();

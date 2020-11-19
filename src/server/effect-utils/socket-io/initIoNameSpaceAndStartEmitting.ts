@@ -1,6 +1,6 @@
 import {EffectContainer} from "../../effectContainer";
 import {ioServer} from "../../main";
-import {ServerEchoStream} from "./serverEchoStream";
+import {ServerEchoStream} from "../../pure-utils/serverEchoStream";
 
 export const initIoNameSpaceAndStartEmitting = ({twitterStream}: EffectContainer) => ({
 	id,

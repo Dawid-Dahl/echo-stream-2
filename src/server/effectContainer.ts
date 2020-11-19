@@ -1,7 +1,19 @@
 import redis, {RedisClient} from "redis";
-import {redisServerStore} from "./api/utils/server-store/redis-server-store/redisServerStore";
-import {ServerStore, serverStore} from "./api/utils/server-store/serverStore";
-import TwitterStream from "./api/utils/TwitterStream";
+import {redisServerStore} from "./effect-utils/server-store/redis-server-store/redisServerStore";
+import {ServerStore, serverStore} from "./effect-utils/server-store/serverStore";
+import {
+	startEchoStream,
+	stopEchoStream,
+	shutDownStreamAfterTimeout,
+} from "./effect-utils/echo-stream/echoStreamUtils";
+import {
+	getEchoStreamServerState,
+	addEchoStreamToServerState,
+	removeEchoStreamFromServerState,
+	removeAllStreamsFromServerState,
+} from "./effect-utils/server-store/serverStoreUtils";
+import {initIoNameSpaceAndStartEmitting} from "./effect-utils/socket-io/initIoNameSpaceAndStartEmitting";
+import TwitterStream from "./effect-utils/twitter-stream/TwitterStream";
 
 export const store = serverStore(redisServerStore);
 
@@ -17,8 +29,26 @@ export type EffectContainer = {
 	store: ServerStore;
 	twitterStream: TwitterStream;
 	redisClient: RedisClient;
+	effectUtils: typeof effectUtils;
 };
 
-const effectContainer: EffectContainer = {store, twitterStream, redisClient};
+const effectUtils = {
+	echoStreamUtils: {
+		startEchoStream,
+		stopEchoStream,
+		shutDownStreamAfterTimeout,
+	},
+	socketIoUtils: {
+		initIoNameSpaceAndStartEmitting,
+	},
+	storeUtils: {
+		getEchoStreamServerState,
+		addEchoStreamToServerState,
+		removeEchoStreamFromServerState,
+		removeAllStreamsFromServerState,
+	},
+};
+
+const effectContainer: EffectContainer = {store, twitterStream, redisClient, effectUtils};
 
 export default effectContainer;

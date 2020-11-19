@@ -61,3 +61,29 @@ describe("TwitterStream", () => {
 		});
 	});
 });
+
+//TODO - Moved from utils into class
+/* describe("shutDownAndCleanUpAfterEchoStream", () => {
+	const twitterStream = new TwitterStream();
+
+	describe("happy path", () => {
+		it("should stop the twitter stream, then remove all listeners", () => {
+			const twitterStreamStopSpy = jest
+				.spyOn(twitterStream, "stopTwitterStream")
+				.mockImplementation(() => {});
+
+			shutDownAndCleanUpAfterEchoStream(twitterStream);
+
+			expect(twitterStreamStopSpy).toHaveBeenCalledTimes(1);
+		});
+		it("should remove all listeners", () => {
+			const twitterStreamRemoveAllListenersSpy = jest
+				.spyOn(twitterStream, "removeAllListeners")
+				.mockImplementation(() => expect.any(TwitterStream));
+
+			shutDownAndCleanUpAfterEchoStream(twitterStream);
+
+			expect(twitterStreamRemoveAllListenersSpy).toHaveBeenCalledTimes(1);
+		});
+	});
+}); */

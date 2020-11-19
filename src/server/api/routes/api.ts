@@ -1,10 +1,12 @@
 import express from "express";
 import echoStreamRouter from "./echoStream";
 import util from "util";
-import {getEchoStreamServerState} from "../utils/serverStoreActions";
 import {EffectContainer, store} from "../../effectContainer";
 
 const apiRouter = (effectContainer: EffectContainer) => {
+	const {effectUtils} = effectContainer;
+	const {getEchoStreamServerState} = effectUtils.storeUtils;
+
 	const router = express.Router();
 
 	router.get("/ping", (req, res) => res.json("Pong"));
