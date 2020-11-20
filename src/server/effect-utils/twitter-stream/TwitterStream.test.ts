@@ -1,7 +1,5 @@
 import TwitterStream from "./TwitterStream";
 import T from "../../config/twitConfig";
-import {Stream} from "twit";
-import {start} from "repl";
 
 jest.mock("twit");
 

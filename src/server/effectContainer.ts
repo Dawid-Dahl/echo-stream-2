@@ -16,9 +16,9 @@ import {initIoNameSpaceAndStartEmitting} from "./effect-utils/socket-io/initIoNa
 import TwitterStream from "./effect-utils/twitter-stream/TwitterStream";
 import {ioServer} from "./main";
 
-export const store = serverStore(redisServerStore);
+const store = serverStore(redisServerStore);
 
-export const twitterStream = new TwitterStream();
+const twitterStream = new TwitterStream();
 
 if (!process.env.REDIS_URL) {
 	throw new Error("REDIS_URL not found.");
