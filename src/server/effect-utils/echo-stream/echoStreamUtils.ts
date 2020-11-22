@@ -62,6 +62,7 @@ export const shutDownStreamAfterTimeout = (effectContainer: EffectContainer) => 
 	const {removeEchoStreamFromServerState} = effectUtils.storeUtils;
 
 	setTimeout(async () => {
+		console.log(`${time / 1000}s has passed. Shutting down this stream [id: ${id}].`);
 		await removeEchoStreamFromServerState(store)(id);
 		await stopEchoStream(effectContainer)(id);
 	}, time);

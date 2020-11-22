@@ -1,4 +1,5 @@
 import {EffectContainer} from "../../effectContainer";
+import {ioServer} from "../../main";
 import {ServerEchoStream} from "../../pure-utils/serverEchoStream";
 
 export const initIoNameSpaceAndStartEmitting = (effectContainer: EffectContainer) => ({
@@ -6,7 +7,7 @@ export const initIoNameSpaceAndStartEmitting = (effectContainer: EffectContainer
 	hashtag,
 }: ServerEchoStream) => {
 	try {
-		const {twitterStream, ioServer} = effectContainer;
+		const {twitterStream} = effectContainer;
 
 		const hashtagNameSpace = ioServer.of(`/${id}/${hashtag}`).on("connection", socket => {
 			console.log(`Client connected to ${hashtag} namespace.`);

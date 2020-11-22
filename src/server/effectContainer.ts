@@ -29,7 +29,6 @@ const redisClient = redis.createClient(process.env.REDIS_URL);
 export type EffectContainer = {
 	store: ServerStore;
 	twitterStream: TwitterStream;
-	ioServer: SocketIO.Server;
 	redisClient: RedisClient;
 	effectUtils: typeof effectUtils;
 };
@@ -51,6 +50,8 @@ const effectUtils = {
 	},
 };
 
-const effectContainer: EffectContainer = {store, twitterStream, ioServer, redisClient, effectUtils};
+console.log(ioServer);
+
+const effectContainer: EffectContainer = {store, twitterStream, redisClient, effectUtils};
 
 export default effectContainer;

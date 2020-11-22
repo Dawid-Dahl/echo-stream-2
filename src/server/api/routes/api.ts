@@ -1,10 +1,10 @@
 import express from "express";
 import echoStreamRouter from "./echoStream";
 import util from "util";
-import {EffectContainer, store} from "../../effectContainer";
+import {EffectContainer} from "../../effectContainer";
 
 const apiRouter = (effectContainer: EffectContainer) => {
-	const {effectUtils} = effectContainer;
+	const {store, effectUtils} = effectContainer;
 	const {getEchoStreamServerState} = effectUtils.storeUtils;
 
 	const router = express.Router();
