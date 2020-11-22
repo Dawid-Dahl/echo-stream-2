@@ -49,7 +49,8 @@ export const stopEchoStream = (effectContainer: EffectContainer) => async (
 		}
 	} catch (e) {
 		console.error(e);
-		throw new Error("Couldn't start the Echo Stream");
+
+		return null;
 	}
 };
 

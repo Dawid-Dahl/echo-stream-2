@@ -1,5 +1,7 @@
 import {ServerStore} from "../effect-utils/server-store/serverStore";
 import TwitterStream from "../effect-utils/twitter-stream/TwitterStream";
+import {EffectContainer} from "../effectContainer";
+import {ServerEchoStream} from "../pure-utils/serverEchoStream";
 
 const effectContainer = {
 	store: {
@@ -22,17 +24,19 @@ const effectContainer = {
 	redisClient: jest.fn(),
 	effectUtils: {
 		echoStreamUtils: {
-			startEchoStream: jest.fn(),
+			startEchoStream: jest.fn(() => () => Promise.resolve([])),
 			stopEchoStream: jest.fn(),
 			shutDownStreamAfterTimeout: jest.fn(),
 		},
 		socketIoUtils: {
-			initIoNameSpaceAndStartEmitting: jest.fn(),
+			initIoNameSpaceAndStartEmitting: jest.fn(
+				(effectContainer: EffectContainer) => ({id, hashtag}: ServerEchoStream) => undefined
+			),
 		},
 		storeUtils: {
-			getEchoStreamServerState: jest.fn(),
+			getEchoStreamServerState: jest.fn(() => () => Promise.resolve([])),
 			addEchoStreamToServerState: jest.fn(),
-			removeEchoStreamFromServerState: jest.fn(),
+			removeEchoStreamFromServerState: jest.fn(() => () => Promise.resolve(true)),
 			removeAllStreamsFromServerState: jest.fn(),
 		},
 	},
