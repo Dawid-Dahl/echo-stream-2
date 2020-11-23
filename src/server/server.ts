@@ -13,27 +13,30 @@ export const server = (effectContainer: EffectContainer) => {
 
 	const app = express();
 
-	const RedisStore = require("connect-redis")(session);
+	if (process.env.NODE_ENV !== "test") {
+		const RedisStore = require("connect-redis")(session);
 
-	if (!process.env.REDIS_URL) {
-		throw new Error("REDIS_URL not found.");
+		if (!process.env.REDIS_URL) {
+			throw new Error("REDIS_URL not found.");
+		}
+
+		app.use(
+			session({
+				store: new RedisStore({client: redisClient}),
+				secret: process.env.SESSION_STORE_SECRET as string,
+				saveUninitialized: true,
+				resave: false,
+			})
+		);
+
+		app.use(function (req, res, next) {
+			if (!req.session) {
+				return next(new Error("Couldn't start a session. Is Redis server active?"));
+			}
+			next();
+		});
 	}
 
-	app.use(
-		session({
-			store: new RedisStore({client: redisClient}),
-			secret: process.env.SESSION_STORE_SECRET as string,
-			saveUninitialized: true,
-			resave: false,
-		})
-	);
-
-	app.use(function (req, res, next) {
-		if (!req.session) {
-			return next(new Error("Couldn't start a session. Is Redis server active?"));
-		}
-		next();
-	});
 	app.use(express.json());
 	app.use(
 		cors({
@@ -57,9 +60,6 @@ export const server = (effectContainer: EffectContainer) => {
 	if (process.env.NODE_ENV === "development") {
 		app.use(morgan("dev"));
 		app.use(errorhandler());
-	}
-
-	if (process.env.NODE_ENV !== "test") {
 	}
 
 	process.on("uncaughtException", err => {

@@ -9,7 +9,7 @@ const apiRouter = (effectContainer: EffectContainer) => {
 
 	const router = express.Router();
 
-	router.get("/ping", (req, res) => res.json("Pong"));
+	router.get("/ping", (req, res) => res.status(200).json("Pong"));
 
 	router.get("/log-server-state", async (req, res) => {
 		try {

@@ -100,6 +100,7 @@ describe("echoStreamUtils", () => {
 				const spy = jest.spyOn(echoStreamUtils, "startEchoStream");
 				await stopEchoStream(effectContainer)(mockEchoStreamId);
 				expect(spy).not.toHaveBeenCalled();
+				spy.mockRestore();
 			});
 		});
 		describe("sad path", () => {

@@ -21,7 +21,10 @@ const effectContainer = {
 		"startTwitterStream" | "stopTwitterStream" | "shutDownAndCleanUpAfterEchoStream"
 	>,
 	ioServer: jest.fn(),
-	redisClient: jest.fn(),
+	redisClient: {
+		set: jest.fn(),
+		get: jest.fn(),
+	},
 	effectUtils: {
 		echoStreamUtils: {
 			startEchoStream: jest.fn(() => () => Promise.resolve([])),
