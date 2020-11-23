@@ -1,15 +1,15 @@
 import {Echo} from "../components/echo/Echo";
 import {ClientEchoStream} from "./clientEchoStream";
 
-export const removeHashtagAndSpacesFromString = (str: string) => str.replace(/#|\s/g, "");
-
 export const sanitizeStringUnconfig = (...fns: Array<(x: string) => string>) => (
 	str: string
 ): string => fns.reduce((acc, cur) => cur(acc), str);
 
+export const removeHashtagAndSpacesFromString = (str: string) => str.replace(/#|\s/g, "");
+
 export const sanitizeString = sanitizeStringUnconfig(
 	removeHashtagAndSpacesFromString,
-	(str: string) => str.toLocaleLowerCase()
+	(str: string) => str.toLowerCase()
 );
 
 export const generateId = () => Math.random().toString(36).substring(2) + Date.now().toString(36);
