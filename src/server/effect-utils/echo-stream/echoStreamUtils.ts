@@ -41,7 +41,8 @@ export const stopEchoStream = (effectContainer: EffectContainer) => async (
 		if (echoStreamServerState) {
 			twitterStream.shutDownAndCleanUpAfterEchoStream();
 
-			await startEchoStream(effectContainer)(echoStreamServerState);
+			echoStreamServerState.length > 0 &&
+				(await startEchoStream(effectContainer)(echoStreamServerState));
 
 			return echoStreamServerState;
 		} else {
@@ -62,7 +63,7 @@ export const shutDownStreamAfterTimeout = (effectContainer: EffectContainer) => 
 	const {removeEchoStreamFromServerState} = effectUtils.storeUtils;
 
 	setTimeout(async () => {
-		console.log(`${time / 1000}s has passed. Shutting down this stream [id: ${id}].`);
+		console.log(`${time / 60 / 1000}m has passed. Shutting down this stream [id: ${id}].`);
 		await removeEchoStreamFromServerState(store)(id);
 		await stopEchoStream(effectContainer)(id);
 	}, time);

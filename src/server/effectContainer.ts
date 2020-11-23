@@ -14,7 +14,6 @@ import {
 } from "./effect-utils/server-store/serverStoreUtils";
 import {initIoNameSpaceAndStartEmitting} from "./effect-utils/socket-io/initIoNameSpaceAndStartEmitting";
 import TwitterStream from "./effect-utils/twitter-stream/TwitterStream";
-import {ioServer} from "./main";
 
 const store = serverStore(redisServerStore);
 
@@ -49,8 +48,6 @@ const effectUtils = {
 		removeAllStreamsFromServerState,
 	},
 };
-
-console.log(ioServer);
 
 const effectContainer: EffectContainer = {store, twitterStream, redisClient, effectUtils};
 

@@ -1,7 +1,7 @@
 import effectContainer from "../../effectContainer";
 import {clientEchoStream} from "../../pure-utils/clientEchoStream";
 import {ServerEchoStream} from "../../pure-utils/serverEchoStream";
-import {manyStreams} from "../mock-data/mockData";
+import {manyStreams, oneStream} from "../mock-data/mockData";
 import * as echoStreamUtils from "./echoStreamUtils";
 
 const {startEchoStream, stopEchoStream} = echoStreamUtils;
@@ -83,7 +83,11 @@ describe("echoStreamUtils", () => {
 				expect(twitterStream.shutDownAndCleanUpAfterEchoStream).toHaveBeenCalledTimes(1);
 				expect(twitterStream.shutDownAndCleanUpAfterEchoStream).toHaveBeenCalledWith();
 			});
-			it("should delegate to startEchoStream", async () => {
+			it("should delegate to startEchoStream if server state is not empty", async () => {
+				(effectUtils.storeUtils
+					.getEchoStreamServerState as any).mockImplementationOnce(() => () =>
+					Promise.resolve(oneStream)
+				);
 				const spy = jest
 					.spyOn(echoStreamUtils, "startEchoStream")
 					.mockImplementationOnce(() => () => Promise.resolve([]));
@@ -91,6 +95,11 @@ describe("echoStreamUtils", () => {
 				expect(spy).toHaveBeenCalledTimes(1);
 				expect(spy).toHaveBeenCalledWith(effectContainer);
 				spy.mockRestore();
+			});
+			it("should not delegate to startEchoStream if server state is empty", async () => {
+				const spy = jest.spyOn(echoStreamUtils, "startEchoStream");
+				await stopEchoStream(effectContainer)(mockEchoStreamId);
+				expect(spy).not.toHaveBeenCalled();
 			});
 		});
 		describe("sad path", () => {

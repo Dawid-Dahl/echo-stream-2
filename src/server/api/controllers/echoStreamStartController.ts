@@ -25,7 +25,7 @@ const echoStreamStartController = (effectContainer: EffectContainer) => async (
 
 			const clientState = await startEchoStream(effectContainer)(echoStreamServerState);
 
-			shutDownStreamAfterTimeout(effectContainer)(10 * 1000, id);
+			shutDownStreamAfterTimeout(effectContainer)(60 * 60 * 1000, id);
 
 			if (clientState) {
 				res.status(200).json(JSON.stringify(clientState));
