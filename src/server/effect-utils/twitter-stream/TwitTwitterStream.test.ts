@@ -1,4 +1,4 @@
-/* import TwitTwitterStream from "./TwitTwitterStream";
+import TwitTwitterStream from "./TwitTwitterStream";
 import T from "../../config/twitConfig";
 
 jest.mock("twit");
@@ -135,4 +135,3 @@ describe("TwitTwitterStream", () => {
 		});
 	});
 });
- */
