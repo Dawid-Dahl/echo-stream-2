@@ -7,5 +7,5 @@ export interface IStopTwitterStream {
 }
 
 export interface IShutDownAndCleanUpAfterEchoStream {
-	stopTwitterStream(): void;
+	shutDownAndCleanUpAfterEchoStream(): void;
 }
