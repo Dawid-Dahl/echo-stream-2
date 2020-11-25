@@ -1,5 +1,5 @@
 import {ServerStore} from "../effect-utils/server-store/serverStore";
-import TwitterStream from "../effect-utils/twitter-stream/TwitterStream";
+import TwitTwitterStream from "../effect-utils/twitter-stream/TwitTwitterStream";
 import {EffectContainer} from "../effectContainer";
 import {ServerEchoStream} from "../pure-utils/serverEchoStream";
 
@@ -17,7 +17,7 @@ const effectContainer = {
 		stopTwitterStream: jest.fn(),
 		shutDownAndCleanUpAfterEchoStream: jest.fn(),
 	} as Pick<
-		TwitterStream,
+		TwitTwitterStream,
 		"startTwitterStream" | "stopTwitterStream" | "shutDownAndCleanUpAfterEchoStream"
 	>,
 	ioServer: jest.fn(),

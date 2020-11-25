@@ -13,11 +13,12 @@ import {
 	removeAllStreamsFromServerState,
 } from "./effect-utils/server-store/serverStoreUtils";
 import {initIoNameSpaceAndStartEmitting} from "./effect-utils/socket-io/initIoNameSpaceAndStartEmitting";
-import TwitterStream from "./effect-utils/twitter-stream/TwitterStream";
+import TwitTwitterStream from "./effect-utils/twitter-stream/TwitTwitterStream";
+import T from "./config/twitConfig";
 
 const store = serverStore(redisServerStore);
 
-const twitterStream = new TwitterStream();
+const twitterStream = new TwitTwitterStream(T);
 
 if (!process.env.REDIS_URL) {
 	throw new Error("REDIS_URL not found.");
@@ -27,7 +28,7 @@ const redisClient = redis.createClient(process.env.REDIS_URL);
 
 export type EffectContainer = {
 	store: ServerStore;
-	twitterStream: TwitterStream;
+	twitterStream: TwitTwitterStream;
 	redisClient: RedisClient;
 	effectUtils: typeof effectUtils;
 };
