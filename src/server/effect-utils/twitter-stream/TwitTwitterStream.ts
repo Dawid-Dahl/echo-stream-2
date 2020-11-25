@@ -57,14 +57,14 @@ class TwitTwitterStream
 		}
 	}
 
-	shutDownAndCleanUpAfterEchoStream = () => {
+	shutDownAndCleanUpAfterEchoStream() {
 		if (this.twitStream) {
 			this.stopTwitterStream();
 			this.removeAllListeners();
 		} else {
 			console.log("Twitter stream is not active, no need to shut down anything.");
 		}
-	};
+	}
 }
 
 export default TwitTwitterStream;
