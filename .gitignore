@@ -5,4 +5,3 @@ dist
 .env
 .DS_Store
 Dockerfile
-docker-compose.yml

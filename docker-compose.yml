@@ -1,0 +1,18 @@
+version: "3.7"
+
+services:
+    app:
+        image: echostream2
+        container_name: es2
+        depends_on:
+            - redis
+        env_file:
+            - .env
+        environment:
+            - NODE_ENV=production
+        ports:
+            - 6824:6824
+    redis:
+        image: redis
+        ports:
+            - 6379:6379
