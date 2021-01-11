@@ -1,7 +1,7 @@
+Dockerfile
+.git
 node_modules
-coverage
 dist
-.cache
 .env
 .DS_Store
-Dockerfile
+.cache

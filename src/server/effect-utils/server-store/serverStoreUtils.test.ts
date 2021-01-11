@@ -1,19 +1,11 @@
 import {
 	addEchoStreamToServerState,
-	getAllEchoStreamsActiveLongerThan,
 	getEchoStreamServerState,
 	removeAllStreamsFromServerState,
 	removeEchoStreamFromServerState,
 } from "./serverStoreUtils";
 import {serverEchoStream, ServerEchoStream} from "../../pure-utils/serverEchoStream";
-import {
-	manyStreams,
-	noStreams,
-	oneStream,
-	threeStreamsOneCreatedNowTwoCreatedTwoDaysAgo,
-	threeStreamsOneCreatedNowTwoCreatedTwoHoursAgo,
-	threeStreamsOneCreatedNowTwoCreatedTwoMinutesAgo,
-} from "../mock-data/mockData";
+import {manyStreams, noStreams, oneStream} from "../mock-data/mockData";
 import {ServerStore} from "./serverStore";
 import {mocked} from "ts-jest/utils";
 
@@ -62,47 +54,6 @@ describe("getEchoStreamServerState", () => {
 				expect(e.message).toMatch("error!");
 			}
 		});
-	});
-});
-
-describe("getAllEchoStreamsActiveLongerThan", () => {
-	describe("happy path", () => {
-		it("get all streams active longer than a minute", () => {
-			jest.spyOn(Date, "now").mockImplementationOnce(() =>
-				new Date("2020-12-12T12:00:00.000Z").getTime()
-			);
-			expect(
-				getAllEchoStreamsActiveLongerThan(
-					60 * 1000,
-					threeStreamsOneCreatedNowTwoCreatedTwoMinutesAgo
-				)
-			).toEqual(threeStreamsOneCreatedNowTwoCreatedTwoMinutesAgo.slice(1));
-		});
-		it("get all streams active longer than an hour", () => {
-			jest.spyOn(Date, "now").mockImplementationOnce(() =>
-				new Date("2020-12-12T12:00:00.000Z").getTime()
-			);
-			expect(
-				getAllEchoStreamsActiveLongerThan(
-					60 * 60 * 1000,
-					threeStreamsOneCreatedNowTwoCreatedTwoHoursAgo
-				)
-			).toEqual(threeStreamsOneCreatedNowTwoCreatedTwoHoursAgo.slice(1));
-		});
-		it("get all streams active longer than a day", () => {
-			jest.spyOn(Date, "now").mockImplementationOnce(() =>
-				new Date("2020-12-12T12:00:00.000Z").getTime()
-			);
-			expect(
-				getAllEchoStreamsActiveLongerThan(
-					24 * 60 * 60 * 1000,
-					threeStreamsOneCreatedNowTwoCreatedTwoDaysAgo
-				)
-			).toEqual(threeStreamsOneCreatedNowTwoCreatedTwoDaysAgo.slice(1));
-		});
-	});
-	it("should return an empty array if there are no streams", () => {
-		expect(getAllEchoStreamsActiveLongerThan(24 * 60 * 60 * 1000, [])).toEqual([]);
 	});
 });
 

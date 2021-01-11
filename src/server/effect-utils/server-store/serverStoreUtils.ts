@@ -12,12 +12,6 @@ export const getEchoStreamServerState = (store: ServerStore) => async () => {
 	}
 };
 
-export const getAllEchoStreamsActiveLongerThan = (
-	time: number,
-	streams: ServerEchoStream[]
-): ServerEchoStream[] =>
-	streams.filter(stream => Date.now() + time < new Date(stream.createdAt).getTime());
-
 export const addEchoStreamToServerState = (
 	store: ServerStore,
 	serverEchoStream: (
