@@ -11,6 +11,7 @@ const T = new Twit({
 	access_token: process.env.TWITTER_ACCESS_TOKEN ?? "",
 	access_token_secret: process.env.TWITTER_TOKEN_SECRET ?? "",
 	timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
+	strictSSL: true,
 });
 
 export default T;

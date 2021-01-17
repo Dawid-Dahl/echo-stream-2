@@ -12,7 +12,10 @@ services:
             - NODE_ENV=production
         ports:
             - 6824:6824
+        restart: on-failure
     redis:
         image: redis
+        container_name: rds
         ports:
             - 6379:6379
+        restart: on-failure
